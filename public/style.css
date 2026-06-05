@@ -503,6 +503,21 @@ select {
   box-shadow: 0 4px 0 var(--btn-dark);
 }
 
+/* CREDIT */
+.credit {
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.credit a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 800;
+}
+.credit a:hover { opacity: 0.75; }
+
 /* TOAST */
 .toast {
   position: fixed;
