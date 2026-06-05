@@ -43,6 +43,27 @@ const DEFAULTS = {
   activiteOms: 150,
 };
 
+// Traductions CO₂ économisé → équivalences fun
+const CO2_EQUIVALENCES = [
+  { max: 0.005, label: "= 1 image générée par IA 🤖" },
+  { max: 0.25,  label: "= 1 A/R boulangerie en voiture 🥖" },
+  { max: 0.5,   label: "= 1 café expresso (production + transport) ☕" },
+  { max: 3,     label: "= 1 Big Mac 🍔" },
+  { max: 6.5,   label: "= 1 poulet fermier du marché 🐔" },
+  { max: 8,     label: "= 1 steak de bœuf 250g 🥩" },
+  { max: 35,    label: "= fabrication d'un jean neuf 👖" },
+  { max: 50,    label: "= 1 smartphone neuf (fabrication) 📱" },
+  { max: 120,   label: "= 40 burgers 🍔" },
+  { max: 180,   label: "= A/R Paris-Rennes chez les parents en voiture 🚗" },
+  { max: 320,   label: "= fabrication d'une grande TV 55\" 📺" },
+  { max: 420,   label: "= A/R Paris-Berlin en road trip 🚗" },
+  { max: 700,   label: "= fabrication d'un canapé 3 places 🛋️" },
+  { max: 1000,  label: "= fabrication d'un frigo américain 🧊" },
+  { max: 1300,  label: "= A/R Paris-Marrakech en voiture 🗺️" },
+  { max: 1800,  label: "= fabrication d'une moto neuve 🏍️" },
+  { max: Infinity, label: "= 1 vache entière 🐄" },
+];
+
 // Traductions économies → expériences (pas de voyage en avion)
 const EQUIVALENCES = [
   { max: 200,  label: "= un bon resto en amoureux 🍷" },
@@ -99,7 +120,7 @@ function calculate() {
   const vitVoiture = contexte === 'urbain' ? params.vitesseVoiture : params.vitesseVoiture * 2.2;
   const vitVelo    = params.vitessevelo;
 
-  const kmAn = kmJour * jours * 52;
+  const kmAn = kmJour * jours * 47; // 47 semaines (5 sem de vacances)
 
   // 1. ARGENT
   const coutVoitureAn = kmAn * params.coutKm;
@@ -171,7 +192,8 @@ function updateUI() {
     ? (co2Economise / 1000).toFixed(1).replace('.', ',') + ' t'
     : co2Economise + ' kg';
   document.getElementById('valCo2').textContent = co2Txt;
-  document.getElementById('equivCo2').textContent = `= ${arbres} arbres qui absorbent pendant 1 an 🌳`;
+  const co2Equiv = CO2_EQUIVALENCES.find(e => (co2Economise / 1000) <= e.max)?.label || CO2_EQUIVALENCES.at(-1).label;
+  document.getElementById('equivCo2').textContent = co2Equiv;
   bump(document.getElementById('cardCo2'));
 
   // Amortissement
