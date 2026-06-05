@@ -118,7 +118,16 @@ function calculate() {
   const minVeloSemaine = (kmJour * jours / vitVelo) * 60;
   const ratio = Math.round(minVeloSemaine / params.activiteOms * 10) / 10;
 
-  return { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine };
+  // 4. CO₂ (ADEME)
+  // SUV thermique moyen : 180g CO₂/km (cycle mixte + fabrication amorti)
+  // Vélo cargo : ~10g CO₂/km (fabrication amorti sur 10 ans)
+  const co2SUVkm  = 0.180; // kg/km
+  const co2Velokm = 0.010; // kg/km
+  const co2Economise = Math.round((co2SUVkm - co2Velokm) * kmAn); // kg/an
+  // 1 arbre absorbe ~25 kg CO₂/an
+  const arbres = Math.round(co2Economise / 25);
+
+  return { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine, co2Economise, arbres };
 }
 
 function getEquivalence(euros) {
@@ -137,7 +146,7 @@ function bump(card) {
 }
 
 function updateUI() {
-  const { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine } = calculate();
+  const { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine, co2Economise, arbres } = calculate();
 
   // Argent
   valArgent.textContent = formatEuros(economie);
@@ -156,6 +165,14 @@ function updateUI() {
   // Forme
   valForme.textContent = ratio + '×';
   bump(document.getElementById('cardForme'));
+
+  // CO₂
+  const co2Txt = co2Economise >= 1000
+    ? (co2Economise / 1000).toFixed(1).replace('.', ',') + ' t'
+    : co2Economise + ' kg';
+  document.getElementById('valCo2').textContent = co2Txt;
+  document.getElementById('equivCo2').textContent = `= ${arbres} arbres qui absorbent pendant 1 an 🌳`;
+  bump(document.getElementById('cardCo2'));
 
   // Amortissement
   updateAmort(economie / 12);
@@ -231,7 +248,7 @@ btnApply.addEventListener('click', () => {
 
 // --- PARTAGE ---
 shareBtn.addEventListener('click', () => {
-  const { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine } = calculate();
+  const { economie, joursGagnes, tempsPositif, diffMin, minVeloAn, ratio, minVeloSemaine, co2Economise, arbres } = calculate();
   const km = kmSlider.value;
   const jours = joursSlider.value;
   const ctx = contexte;
