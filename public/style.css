@@ -503,6 +503,50 @@ select {
   box-shadow: 0 4px 0 var(--btn-dark);
 }
 
+/* SEO HEADER */
+.seo-header {
+  text-align: center;
+  padding: 0 4px;
+}
+.seo-header h1 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.seo-header p {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* SEO CONTENT & FAQ */
+.seo-content, .faq {
+  padding: 4px 8px;
+  border-top: 1px solid var(--border);
+}
+.seo-content h2, .faq h2 {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--primary-dark);
+  margin: 14px 0 4px;
+}
+.seo-content h3, .faq h3 {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 10px 0 3px;
+}
+.seo-content p, .faq p {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* CREDIT */
 .credit {
   text-align: center;
