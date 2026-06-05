@@ -289,6 +289,14 @@ shareBtn.addEventListener('click', () => {
   const url = `${location.origin}?km=${km}&jours=${jours}&ctx=${ctx}`;
   const texte = `J'ai simulé mon trajet sur CaptainCargo 🚲\n${joursGagnes} jours/an en moins dans les transports, ${formatEuros(economie)} économisés, et ${ratio}× l'activité physique recommandée.\nEt toi ? ${url}`;
 
+  // Track partage
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      km: km, jours: jours, contexte: ctx,
+      economie: economie, ratio_oms: ratio
+    });
+  }
+
   if (navigator.share) {
     navigator.share({ text: texte, url });
   } else {
