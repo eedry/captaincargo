@@ -526,7 +526,12 @@ select {
 /* SEO CONTENT & FAQ */
 .seo-content, .faq {
   padding: 4px 8px;
+}
+
+.credit-footer {
   border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 4px;
 }
 .seo-content h2, .faq h2 {
   font-size: 0.8rem;
