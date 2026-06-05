@@ -41,6 +41,7 @@ const DEFAULTS = {
   vitesseVoiture: 14, // porte-à-porte urbain : embouteillages + parking + marche
   vitessevelo: 15,
   activiteOms: 150,
+  semainesTravail: 47,
 };
 
 // Traductions CO₂ économisé → équivalences fun
@@ -120,7 +121,7 @@ function calculate() {
   const vitVoiture = contexte === 'urbain' ? params.vitesseVoiture : params.vitesseVoiture * 2.2;
   const vitVelo    = params.vitessevelo;
 
-  const kmAn = kmJour * jours * 47; // 47 semaines (5 sem de vacances)
+  const kmAn = kmJour * jours * params.semainesTravail;
 
   // 1. ARGENT
   const coutVoitureAn = kmAn * params.coutKm;
@@ -246,10 +247,19 @@ activiteOmsSlider.addEventListener('input', () => {
   activiteOmsVal.textContent = activiteOmsSlider.value + ' min/sem (OMS)';
 });
 
+const semainesSlider = document.getElementById('semainesTravail');
+const semainesVal    = document.getElementById('semainesTravailVal');
+semainesSlider.addEventListener('input', () => {
+  const vacances = 52 - parseInt(semainesSlider.value);
+  semainesVal.textContent = `${semainesSlider.value} sem (${vacances} sem de vacances)`;
+});
+
 btnReset.addEventListener('click', () => {
   params = { ...DEFAULTS };
   vehiculeSelect.value = '0.52';
   coutKmInput.value = DEFAULTS.coutKm;
+  semainesSlider.value = DEFAULTS.semainesTravail;
+  semainesVal.textContent = `${DEFAULTS.semainesTravail} sem (${52 - DEFAULTS.semainesTravail} sem de vacances)`;
   vitesseVoitureSlider.value = DEFAULTS.vitesseVoiture;
   vitesseVoitureVal.textContent = DEFAULTS.vitesseVoiture + ' km/h';
   vitesseveloSlider.value = DEFAULTS.vitessevelo;
@@ -263,6 +273,7 @@ btnApply.addEventListener('click', () => {
   params.vitesseVoiture = parseInt(vitesseVoitureSlider.value);
   params.vitessevelo = parseInt(vitesseveloSlider.value);
   params.activiteOms = parseInt(activiteOmsSlider.value);
+  params.semainesTravail = parseInt(semainesSlider.value);
   localStorage.setItem('captaincargo_params', JSON.stringify(params));
   modalOverlay.classList.remove('open');
   updateUI();
