@@ -192,7 +192,7 @@ function updateUI() {
     ? (co2Economise / 1000).toFixed(1).replace('.', ',') + ' t'
     : co2Economise + ' kg';
   document.getElementById('valCo2').textContent = co2Txt;
-  const co2Equiv = CO2_EQUIVALENCES.find(e => (co2Economise / 1000) <= e.max)?.label || CO2_EQUIVALENCES.at(-1).label;
+  const co2Equiv = CO2_EQUIVALENCES.find(e => co2Economise <= e.max)?.label || CO2_EQUIVALENCES.at(-1).label;
   document.getElementById('equivCo2').textContent = co2Equiv;
   bump(document.getElementById('cardCo2'));
 
