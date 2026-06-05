@@ -509,11 +509,12 @@ select {
   padding: 0 4px;
 }
 .seo-header h1 {
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--primary-dark);
-  line-height: 1.4;
+  line-height: 1.3;
   margin-bottom: 6px;
+  text-align: center;
 }
 .seo-header p {
   font-size: 0.75rem;
