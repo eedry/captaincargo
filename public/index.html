@@ -56,7 +56,7 @@
           <span>📍 Km par jour <small style="font-weight:700;opacity:0.6">(A/R compris)</small></span>
         </div>
         <div class="slider-row">
-          <input type="range" id="kmSlider" min="1" max="100" value="24" step="1">
+          <input type="range" id="kmSlider" min="1" max="60" value="24" step="1">
           <span class="slider-value" id="kmValue">24 km</span>
         </div>
       </div>
@@ -165,7 +165,7 @@
       </div>
     </section>
 
-    <!-- ④ CARTES RÉSULTATS — BLOC 2 (jaune + temps + [vert|rose]) -->
+    <!-- ④ CARTES RÉSULTATS — BLOC 2 -->
     <section class="results">
       <div class="result-card yellow" id="cardArgent2">
         <div class="result-icon-wrap">💸</div>
@@ -173,6 +173,14 @@
           <div class="result-value" id="valArgent2">–</div>
           <div class="result-label">économisés par an</div>
           <div class="result-equiv" id="equivArgent2">–</div>
+        </div>
+      </div>
+      <div class="result-card purple" id="cardAmort">
+        <div class="result-icon-wrap">📊</div>
+        <div class="result-content">
+          <div class="result-value" id="valAmort">–</div>
+          <div class="result-label" id="labelAmort">–</div>
+          <div class="result-equiv" id="equivAmort">–</div>
         </div>
       </div>
       <div class="result-card green" id="cardTemps2">
@@ -183,34 +191,24 @@
           <div class="result-equiv" id="valTempsDelta2">–</div>
         </div>
       </div>
-      <div class="results-half">
-        <div class="result-card cyan" id="cardCo2">
-          <div class="result-content">
-            <div class="result-icon-wrap-sm">🌱</div>
-            <div class="result-value" id="valCo2">–</div>
-            <div class="result-label">CO₂ évitées / an</div>
-            <div class="result-equiv" id="equivCo2">–</div>
-          </div>
-        </div>
-        <div class="result-card coral" id="cardForme">
-          <div class="result-content">
-            <div class="result-icon-wrap-sm">💪</div>
-            <div class="result-value" id="valForme">–</div>
-            <div class="result-label">dose OMS / sem</div>
-            <div class="result-equiv">super forme ✨</div>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- ⑤ CARTE AMORT + PARTAGER -->
-    <div class="results">
-      <div class="result-card purple" id="cardAmort">
-        <div class="result-icon-wrap">📊</div>
+    <!-- Verte + Rose côte à côte (hors section results pour flex propre) -->
+    <div class="results-half">
+      <div class="result-card cyan" id="cardCo2">
         <div class="result-content">
-          <div class="result-value" id="valAmort">–</div>
-          <div class="result-label" id="labelAmort">–</div>
-          <div class="result-equiv" id="equivAmort">–</div>
+          <div class="result-icon-wrap-sm">🌱</div>
+          <div class="result-value" id="valCo2">–</div>
+          <div class="result-label">CO₂ évitées / an</div>
+          <div class="result-equiv" id="equivCo2">–</div>
+        </div>
+      </div>
+      <div class="result-card coral" id="cardForme">
+        <div class="result-content">
+          <div class="result-icon-wrap-sm">💪</div>
+          <div class="result-value" id="valForme">–</div>
+          <div class="result-label">dose OMS / sem</div>
+          <div class="result-equiv">super forme ✨</div>
         </div>
       </div>
     </div>
