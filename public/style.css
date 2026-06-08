@@ -428,6 +428,20 @@ input[type="range"]::-webkit-slider-thumb:active {
   font-weight: 700;
   color: var(--text-secondary);
 }
+.hypo-section {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #DDD6FE;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: var(--primary-dark);
+}
+.hypo-section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
 .hypo-row {
   display: flex;
   align-items: center;
