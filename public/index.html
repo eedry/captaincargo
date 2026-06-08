@@ -76,7 +76,7 @@
       </div>
     </section>
 
-    <!-- ② CARTES RÉSULTATS — BLOC 1 (jaune + temps) -->
+    <!-- ② CARTES RÉSULTATS — BLOC 1 (jaune seule) -->
     <section class="results">
       <div class="result-card yellow" id="cardArgent">
         <div class="result-icon-wrap">💸</div>
@@ -84,14 +84,6 @@
           <div class="result-value" id="valArgent">–</div>
           <div class="result-label">économisés par an</div>
           <div class="result-equiv" id="equivArgent">–</div>
-        </div>
-      </div>
-      <div class="result-card green" id="cardTemps">
-        <div class="result-icon-wrap">⏱️</div>
-        <div class="result-content">
-          <div class="result-value" id="valTempsVelo">–</div>
-          <div class="result-label">de plaisir passées à vélo / an</div>
-          <div class="result-equiv" id="valTempsDelta">–</div>
         </div>
       </div>
     </section>
@@ -122,14 +114,6 @@
           <span class="slider-value" id="semainesTravailVal">47 sem</span>
         </div>
       </div>
-      <div class="input-group">
-        <div class="input-label"><span>⚡ Vitesse voiture en ville</span></div>
-        <div class="slider-row">
-          <input type="range" id="vitesseVoiture" min="10" max="50" value="14" step="1">
-          <span class="slider-value" id="vitesseVoitureVal">14 km/h</span>
-        </div>
-      </div>
-
       <div class="section-divider">💰 Votre vélo cargo</div>
 
       <div class="input-group">
@@ -191,27 +175,23 @@
           <div class="result-equiv" id="valTempsDelta2">–</div>
         </div>
       </div>
-    </section>
-
-    <!-- Verte + Rose côte à côte (hors section results pour flex propre) -->
-    <div class="results-half">
       <div class="result-card cyan" id="cardCo2">
+        <div class="result-icon-wrap">🌱</div>
         <div class="result-content">
-          <div class="result-icon-wrap-sm">🌱</div>
           <div class="result-value" id="valCo2">–</div>
-          <div class="result-label">CO₂ évitées / an</div>
+          <div class="result-label">de CO₂ économisées par an</div>
           <div class="result-equiv" id="equivCo2">–</div>
         </div>
       </div>
       <div class="result-card coral" id="cardForme">
+        <div class="result-icon-wrap">💪</div>
         <div class="result-content">
-          <div class="result-icon-wrap-sm">💪</div>
           <div class="result-value" id="valForme">–</div>
-          <div class="result-label">dose OMS / sem</div>
-          <div class="result-equiv">super forme ✨</div>
+          <div class="result-label">la dose d'activité physique recommandée / semaine par l'OMS</div>
+          <div class="result-equiv">et vous êtes en super forme ✨</div>
         </div>
       </div>
-    </div>
+    </section>
 
     <button class="share-btn" id="shareBtn">📤 Partager mon résultat</button>
 

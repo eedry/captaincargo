@@ -30,8 +30,7 @@ function updateNinja(minSemaine) {
 // --- CONSTANTES ---
 const DEFAULTS = {
   coutKm: 0.52,
-  vitesseVoiture: 14,
-  vitessevelo: 15,
+  vitessevelo: 17,
   semainesTravail: 47,
   parkingMois: 0,
 };
@@ -89,8 +88,6 @@ const parkingSlider        = document.getElementById('parkingMois');
 const parkingVal           = document.getElementById('parkingMoisVal');
 const semainesSlider       = document.getElementById('semainesTravail');
 const semainesVal          = document.getElementById('semainesTravailVal');
-const vitesseVoitureSlider = document.getElementById('vitesseVoiture');
-const vitesseVoitureVal    = document.getElementById('vitesseVoitureVal');
 
 const btnAchat           = document.getElementById('btnAchat');
 const btnLocation        = document.getElementById('btnLocation');
@@ -116,7 +113,7 @@ const getCo2Equiv   = c => CO2_EQUIV.find(x => c <= x.max)?.label || CO2_EQUIV.a
 function calculate() {
   const kmJour = parseInt(kmSlider.value);
   const jours  = parseInt(joursSlider.value);
-  const vitV   = contexte === 'urbain' ? params.vitesseVoiture : params.vitesseVoiture * 2.2;
+  const vitV   = contexte === 'urbain' ? 14 : 14 * 2.2;
   const vitVelo = params.vitessevelo;
   const kmAn   = kmJour * jours * params.semainesTravail;
 
@@ -163,11 +160,7 @@ function updateUI() {
   document.getElementById('equivArgent').textContent = getArgentEquiv(economie);
   bump(document.getElementById('cardArgent'));
 
-  document.getElementById('valTempsVelo').textContent  = heuresVelo + ' h';
-  document.getElementById('valTempsDelta').textContent = tempsDelta;
-  bump(document.getElementById('cardTemps'));
-
-  // --- Bloc 2 : jaune + temps + vert + rose ---
+  // --- Bloc 2 : jaune + amort + temps + vert + rose ---
   document.getElementById('valArgent2').textContent   = fmt(economie);
   document.getElementById('equivArgent2').textContent = getArgentEquiv(economie);
   bump(document.getElementById('cardArgent2'));
@@ -225,11 +218,6 @@ parkingSlider.addEventListener('input', () => {
 semainesSlider.addEventListener('input', () => {
   params.semainesTravail = parseInt(semainesSlider.value);
   semainesVal.textContent = semainesSlider.value + ' sem';
-  updateUI();
-});
-vitesseVoitureSlider.addEventListener('input', () => {
-  params.vitesseVoiture = parseInt(vitesseVoitureSlider.value);
-  vitesseVoitureVal.textContent = vitesseVoitureSlider.value + ' km/h';
   updateUI();
 });
 
