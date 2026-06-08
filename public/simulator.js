@@ -27,20 +27,21 @@ function updateNinja(minSemaine) {
   avatar.innerHTML = ninja.img ? `<img src="${ninja.img}" alt="${ninja.label}">` : ninja.emoji;
 }
 
-// --- VÉHICULES ---
+// --- VÉHICULES (sources : ADEME + Automobile Club Association 2024) ---
+// carburant et entretien en €/km, assurance et controle en €/an
 const VEHICLES = {
-  'citadine-therm': { label: 'Citadine thermique',  carburant: 0.09, entretien: 0.03, assurance: 550, controle: 130 },
-  'berline-therm':  { label: 'Berline thermique',   carburant: 0.12, entretien: 0.04, assurance: 700, controle: 150 },
-  'suv-therm':      { label: 'SUV thermique',       carburant: 0.15, entretien: 0.05, assurance: 900, controle: 150 },
-  'citadine-elec':  { label: 'Citadine électrique', carburant: 0.03, entretien: 0.02, assurance: 500, controle: 100 },
-  'suv-elec':       { label: 'SUV électrique',      carburant: 0.05, entretien: 0.03, assurance: 800, controle: 120 },
+  'citadine-therm': { label: 'Citadine thermique',  carburant: 0.10, entretien: 0.025, assurance: 500, controle: 120 },
+  'berline-therm':  { label: 'Berline thermique',   carburant: 0.13, entretien: 0.035, assurance: 650, controle: 130 },
+  'suv-therm':      { label: 'SUV thermique',       carburant: 0.15, entretien: 0.040, assurance: 750, controle: 150 },
+  'citadine-elec':  { label: 'Citadine électrique', carburant: 0.03, entretien: 0.020, assurance: 500, controle: 100 },
+  'suv-elec':       { label: 'SUV électrique',      carburant: 0.05, entretien: 0.030, assurance: 700, controle: 120 },
 };
 
-const BIKE_ENTRETIEN_KM = 0.05; // €/km
-const SEMAINES          = 47;
-const VIT_URBAIN        = 14;   // km/h
-const VIT_PERIURBAIN    = 30.8; // km/h
-const VIT_VELO          = 17;   // km/h
+const BIKE_ENTRETIEN_DEFAULT = 0.03; // €/km — élec + service + pneus + batterie amortie
+const SEMAINES               = 47;
+const VIT_URBAIN             = 14;   // km/h
+const VIT_PERIURBAIN         = 30.8; // km/h
+const VIT_VELO               = 17;   // km/h
 
 // --- CO₂ ÉQUIVALENCES ---
 const CO2_EQUIV = [
@@ -55,8 +56,16 @@ const CO2_EQUIV = [
 
 // --- ÉTAT ---
 let contexte  = 'urbain';
-let carMode   = 'garde';
 let amortMode = 'achat';
+// Overrides utilisateur sur les hypothèses : null = utilise la valeur véhicule par défaut
+let overrides = {
+  carburant:     null,
+  entretienCar: null,
+  assurance:     null,
+  controle:      null,
+  parking:       0,    // €/mois, toujours en override (pas dans le véhicule)
+  entretienBike: null,
+};
 
 // --- DOM ---
 const kmSlider           = document.getElementById('kmSlider');
@@ -66,11 +75,6 @@ const joursValue         = document.getElementById('joursValue');
 const btnUrbain          = document.getElementById('btnUrbain');
 const btnPeriurbain      = document.getElementById('btnPeriurbain');
 const vehiculeSelect     = document.getElementById('vehiculeSelect');
-const btnGarde           = document.getElementById('btnGarde');
-const btnVend            = document.getElementById('btnVend');
-const parkingBlock       = document.getElementById('parkingBlock');
-const parkingSlider      = document.getElementById('parkingMois');
-const parkingVal         = document.getElementById('parkingMoisVal');
 const btnAchat           = document.getElementById('btnAchat');
 const btnLocation        = document.getElementById('btnLocation');
 const amortAchatBlock    = document.getElementById('amortAchatBlock');
@@ -90,6 +94,7 @@ const fmtH = n => Math.round(n) + ' h';
 const bump = card => { if (!card) return; card.classList.remove('bump'); void card.offsetWidth; card.classList.add('bump'); };
 
 function getArgentEquiv(e) {
+  if (e <= 0)   return `= passez à plus de km pour voir l'écart ↑`;
   if (e < 500)  return `= ${Math.round(e / 80)} pleins d'essence ⛽`;
   if (e < 1000) return `= des vacances en famille en France 🏖️`;
   if (e < 2000) return `= un mois de loyer 🏠`;
@@ -101,36 +106,47 @@ function getCo2Equiv(c) {
   return CO2_EQUIV.find(x => c <= x.max)?.label || CO2_EQUIV.at(-1).label;
 }
 
+// Récupère la valeur effective (override > défaut véhicule)
+function getEffective(v) {
+  return {
+    carburant:     overrides.carburant     ?? v.carburant,
+    entretien:     overrides.entretienCar ?? v.entretien,
+    assurance:     overrides.assurance     ?? v.assurance,
+    controle:      overrides.controle      ?? v.controle,
+    parking:       overrides.parking,
+    entretienBike: overrides.entretienBike ?? BIKE_ENTRETIEN_DEFAULT,
+  };
+}
+
 // --- CALCUL ---
 function calculate() {
-  const kmJour  = parseInt(kmSlider.value);
-  const jours   = parseInt(joursSlider.value);
-  const kmAn    = kmJour * jours * SEMAINES;
-  const v       = VEHICLES[vehiculeSelect.value];
-  const sell    = (carMode === 'vend');
-  const parking = sell ? parseInt(parkingSlider.value) * 12 : 0;
+  const kmJour = parseInt(kmSlider.value);
+  const jours  = parseInt(joursSlider.value);
+  const kmAn   = kmJour * jours * SEMAINES;
+  const v      = VEHICLES[vehiculeSelect.value];
+  const eff    = getEffective(v);
 
-  // Coûts voiture
-  const carCarburant = Math.round(v.carburant * kmAn);
-  const carEntretien = Math.round(v.entretien * kmAn);
-  const carAssurance = sell ? v.assurance : 0;
-  const carControle  = sell ? v.controle  : 0;
-  const carParking   = parking;
+  // Coûts voiture (toujours tout)
+  const carCarburant = Math.round(eff.carburant * kmAn);
+  const carEntretien = Math.round(eff.entretien * kmAn);
+  const carAssurance = eff.assurance;
+  const carControle  = eff.controle;
+  const carParking   = eff.parking * 12;
   const totalCar     = carCarburant + carEntretien + carAssurance + carControle + carParking;
 
   // Coûts vélo (fonctionnement, sans achat)
-  const bikeEntretien = Math.round(BIKE_ENTRETIEN_KM * kmAn);
+  const bikeEntretien = Math.round(eff.entretienBike * kmAn);
   const totalBike     = bikeEntretien;
 
-  // Économie sur coûts courants
+  // Économie
   const economie          = totalCar - totalBike;
   const economieMensuelle = economie / 12;
 
   // Temps
-  const vitV        = contexte === 'urbain' ? VIT_URBAIN : VIT_PERIURBAIN;
+  const vitV         = contexte === 'urbain' ? VIT_URBAIN : VIT_PERIURBAIN;
   const heuresCarAn  = Math.round((kmAn / vitV) * 60 / 60);
   const heuresVeloAn = Math.round((kmAn / VIT_VELO) * 60 / 60);
-  const diffHeures   = heuresCarAn - heuresVeloAn; // positif = vélo plus rapide
+  const diffHeures   = heuresCarAn - heuresVeloAn;
 
   // CO₂ & OMS
   const co2        = Math.round((0.180 - 0.010) * kmAn);
@@ -143,7 +159,7 @@ function calculate() {
     bikeEntretien, totalBike,
     heuresCarAn, heuresVeloAn, diffHeures,
     co2, ratio, minVeloSem,
-    v, sell,
+    v, eff,
   };
 }
 
@@ -163,16 +179,47 @@ function calcAmort(economieMensuelle) {
   }
 }
 
+// --- HYPOTHÈSES (édition inline) ---
+function renderHypotheses(eff) {
+  const vit = contexte === 'urbain' ? VIT_URBAIN : VIT_PERIURBAIN;
+  return `
+    <div class="hypo-row"><span>⛽ Carburant</span>
+      <input type="number" class="hypo-input" data-key="carburant" data-scale="100" min="0" step="1" value="${Math.round(eff.carburant * 100)}"><span class="hypo-unit">cts/km</span></div>
+    <div class="hypo-row"><span>🔧 Entretien voiture</span>
+      <input type="number" class="hypo-input" data-key="entretienCar" data-scale="100" min="0" step="1" value="${Math.round(eff.entretien * 100)}"><span class="hypo-unit">cts/km</span></div>
+    <div class="hypo-row"><span>🛡️ Assurance</span>
+      <input type="number" class="hypo-input" data-key="assurance" data-scale="1" min="0" step="10" value="${eff.assurance}"><span class="hypo-unit">€/an</span></div>
+    <div class="hypo-row"><span>🔍 Contrôle + divers</span>
+      <input type="number" class="hypo-input" data-key="controle" data-scale="1" min="0" step="10" value="${eff.controle}"><span class="hypo-unit">€/an</span></div>
+    <div class="hypo-row"><span>🅿️ Parking</span>
+      <input type="number" class="hypo-input" data-key="parking" data-scale="1" min="0" step="10" value="${eff.parking}"><span class="hypo-unit">€/mois</span></div>
+    <div class="hypo-row"><span>🚲 Entretien vélo</span>
+      <input type="number" class="hypo-input" data-key="entretienBike" data-scale="100" min="0" step="1" value="${Math.round(eff.entretienBike * 100)}"><span class="hypo-unit">cts/km</span></div>
+    <div class="hypo-row hypo-fixed"><span>📅 Base</span><span class="hypo-fixed-val">${SEMAINES} sem/an</span></div>
+    <div class="hypo-row hypo-fixed"><span>🏙️ Vitesse voiture</span><span class="hypo-fixed-val">${vit} km/h</span></div>
+    <div class="hypo-row hypo-fixed"><span>🚲 Vitesse vélo</span><span class="hypo-fixed-val">${VIT_VELO} km/h</span></div>
+    <div class="hypo-sources">📚 Sources : ADEME &amp; Automobile Club Association 2024 — toutes ces valeurs sont ajustables.</div>
+  `;
+}
+
+function attachHypoListeners() {
+  document.querySelectorAll('.hypo-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const key   = input.dataset.key;
+      const scale = parseFloat(input.dataset.scale) || 1;
+      const raw   = parseFloat(input.value);
+      const val   = isNaN(raw) ? 0 : raw / scale;
+      if (key === 'parking') overrides.parking = val;
+      else overrides[key] = val;
+      updateUI({ skipHypoRender: true });
+    });
+  });
+}
+
 // --- MISE À JOUR UI ---
-function updateUI() {
+function updateUI(opts = {}) {
   const r     = calculate();
   const amort = calcAmort(r.economieMensuelle);
-
-  // Lignes "vend" : afficher/masquer
-  document.querySelectorAll('.sell-row').forEach(row => {
-    row.style.display = r.sell ? 'grid' : 'none';
-  });
-  parkingBlock.style.display = r.sell ? 'block' : 'none';
 
   // Big savings
   document.getElementById('valArgent').textContent   = fmt(r.economie);
@@ -203,18 +250,11 @@ function updateUI() {
     timeNote.style.display = 'none';
   }
 
-  // Hypothèses
-  const vit = contexte === 'urbain' ? VIT_URBAIN : VIT_PERIURBAIN;
-  document.getElementById('hypothesesContent').innerHTML = `
-    <div>⛽ Carburant · ${Math.round(r.v.carburant * 100)} cts/km</div>
-    <div>🔧 Entretien voiture · ${Math.round(r.v.entretien * 100)} cts/km</div>
-    <div>🛡️ Assurance · ${r.v.assurance.toLocaleString('fr-FR')} €/an</div>
-    <div>🔍 Contrôle · ${r.v.controle} €/an</div>
-    <div>🚲 Entretien vélo · 5 cts/km</div>
-    <div>📅 Base · ${SEMAINES} semaines/an</div>
-    <div>🏙️ Vitesse voiture · ${vit} km/h</div>
-    <div>🚲 Vitesse vélo · ${VIT_VELO} km/h</div>
-  `;
+  // Hypothèses (ne pas re-render si l'utilisateur est en train de taper)
+  if (!opts.skipHypoRender) {
+    document.getElementById('hypothesesContent').innerHTML = renderHypotheses(r.eff);
+    attachHypoListeners();
+  }
 
   // Amortissement
   document.getElementById('valAmort').textContent   = amort.val;
@@ -237,8 +277,8 @@ function updateUI() {
 }
 
 // --- EVENTS ---
-kmSlider.addEventListener('input', updateUI);
-joursSlider.addEventListener('input', updateUI);
+kmSlider.addEventListener('input', () => updateUI());
+joursSlider.addEventListener('input', () => updateUI());
 
 btnUrbain.addEventListener('click', () => {
   contexte = 'urbain';
@@ -251,22 +291,12 @@ btnPeriurbain.addEventListener('click', () => {
   updateUI();
 });
 
-vehiculeSelect.addEventListener('change', updateUI);
-
-btnGarde.addEventListener('click', () => {
-  carMode = 'garde';
-  btnGarde.classList.add('active'); btnVend.classList.remove('active');
-  updateUI();
-});
-btnVend.addEventListener('click', () => {
-  carMode = 'vend';
-  btnVend.classList.add('active'); btnGarde.classList.remove('active');
-  updateUI();
-});
-
-parkingSlider.addEventListener('input', () => {
-  const v = parseInt(parkingSlider.value);
-  parkingVal.textContent = v === 0 ? '0 €' : v + ' €/mois';
+// Changer de véhicule reset les overrides voiture (pas le parking, qui reste user)
+vehiculeSelect.addEventListener('change', () => {
+  overrides.carburant     = null;
+  overrides.entretienCar = null;
+  overrides.assurance     = null;
+  overrides.controle      = null;
   updateUI();
 });
 

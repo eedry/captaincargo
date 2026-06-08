@@ -25,7 +25,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -87,23 +87,6 @@
           <option value="suv-elec">SUV électrique</option>
         </select>
       </div>
-      <div class="input-group">
-        <div class="input-label"><span>🔑 Je…</span></div>
-        <div class="context-toggle">
-          <button class="ctx-btn active" id="btnGarde">🚗 Garde ma voiture</button>
-          <button class="ctx-btn" id="btnVend">💰 Vends ma voiture</button>
-        </div>
-      </div>
-      <div id="parkingBlock" style="display:none">
-        <div class="input-group">
-          <div class="input-label"><span>🅿️ Parking mensuel économisé</span></div>
-          <div class="slider-row">
-            <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
-            <span class="slider-value" id="parkingMoisVal">0 €</span>
-          </div>
-        </div>
-      </div>
-
       <div class="section-divider">🚲 Votre vélo cargo</div>
 
       <div class="input-group">
@@ -167,17 +150,17 @@
         <div class="match-car" id="mEntretien">–</div>
         <div class="match-bike" id="mBikeEntretien">–</div>
       </div>
-      <div class="match-row sell-row" id="rowAssurance">
+      <div class="match-row" id="rowAssurance">
         <div class="match-label">🛡️ Assurance</div>
         <div class="match-car" id="mAssurance">–</div>
         <div class="match-bike">0 €</div>
       </div>
-      <div class="match-row sell-row" id="rowControle">
+      <div class="match-row" id="rowControle">
         <div class="match-label">🔍 Contrôle + divers</div>
         <div class="match-car" id="mControle">–</div>
         <div class="match-bike">0 €</div>
       </div>
-      <div class="match-row sell-row" id="rowParking">
+      <div class="match-row" id="rowParking">
         <div class="match-label">🅿️ Parking</div>
         <div class="match-car" id="mParking">–</div>
         <div class="match-bike">0 €</div>
@@ -199,7 +182,7 @@
       <p class="match-note match-decote-note">💡 Sans même compter la décote de votre voiture : 1 000 à 2 000 €/an de perdus pendant que le vélo, lui, garde sa valeur.</p>
 
       <details class="hypotheses-details">
-        <summary>Voir les hypothèses ▾</summary>
+        <summary>✏️ Voir et ajuster les hypothèses ▾</summary>
         <div class="hypotheses-grid" id="hypothesesContent"></div>
       </details>
     </section>
@@ -264,6 +247,6 @@
   </main>
 
   <div class="toast" id="toast">✅ Lien copié !</div>
-  <script src="simulator.js?v=4"></script>
+  <script src="simulator.js?v=5"></script>
 </body>
 </html>
