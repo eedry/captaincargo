@@ -25,7 +25,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -46,10 +46,10 @@
   <main>
     <div class="seo-header">
       <h1>Simulateur Vélo Cargo : comparez vos économies face à la voiture</h1>
-      <p>Découvrez combien vous pouvez économiser chaque année en remplaçant une partie de vos trajets en voiture par un vélo cargo électrique.</p>
+      <p>Découvrez combien vous pouvez économiser chaque année en remplaçant vos trajets en voiture par un vélo cargo électrique.</p>
     </div>
 
-    <!-- ① SLIDERS TRAJET -->
+    <!-- INPUTS -->
     <section class="inputs-card">
       <div class="input-group">
         <div class="input-label">
@@ -63,7 +63,7 @@
       <div class="input-group">
         <div class="input-label"><span>📅 Jours par semaine</span></div>
         <div class="slider-row">
-          <input type="range" id="joursSlider" min="1" max="5" value="5" step="1">
+          <input type="range" id="joursSlider" min="1" max="7" value="5" step="1">
           <span class="slider-value" id="joursValue">5 j</span>
         </div>
       </div>
@@ -74,47 +74,37 @@
           <button class="ctx-btn" id="btnPeriurbain">🌳 Périurbain</button>
         </div>
       </div>
-    </section>
 
-    <!-- ② CARTES RÉSULTATS — BLOC 1 (jaune seule) -->
-    <section class="results">
-      <div class="result-card yellow" id="cardArgent">
-        <div class="result-icon-wrap">💸</div>
-        <div class="result-content">
-          <div class="result-value" id="valArgent">–</div>
-          <div class="result-label">économisés par an</div>
-          <div class="result-equiv" id="equivArgent">–</div>
-        </div>
-      </div>
-    </section>
+      <div class="section-divider">🚗 Votre situation</div>
 
-    <!-- ③ PARAMS FINANCIERS & VÉLO CARGO -->
-    <section class="inputs-card">
       <div class="input-group">
-        <div class="input-label"><span>🚗 Mon véhicule actuel</span></div>
+        <div class="input-label"><span>Mon véhicule actuel</span></div>
         <select id="vehiculeSelect">
-          <option value="0.32">Citadine thermique — 0,32 €/km</option>
-          <option value="0.41">Berline thermique — 0,41 €/km</option>
-          <option value="0.52" selected>SUV thermique — 0,52 €/km</option>
-          <option value="0.29">Citadine électrique — 0,29 €/km</option>
-          <option value="0.38">SUV électrique — 0,38 €/km</option>
+          <option value="citadine-therm">Citadine thermique</option>
+          <option value="berline-therm">Berline thermique</option>
+          <option value="suv-therm" selected>SUV thermique</option>
+          <option value="citadine-elec">Citadine électrique</option>
+          <option value="suv-elec">SUV électrique</option>
         </select>
       </div>
       <div class="input-group">
-        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
-        <div class="slider-row">
-          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
-          <span class="slider-value" id="parkingMoisVal">0 €</span>
+        <div class="input-label"><span>🔑 Je…</span></div>
+        <div class="context-toggle">
+          <button class="ctx-btn active" id="btnGarde">🚗 Garde ma voiture</button>
+          <button class="ctx-btn" id="btnVend">💰 Vends ma voiture</button>
         </div>
       </div>
-      <div class="input-group">
-        <div class="input-label"><span>🏖️ Semaines travaillées / an</span></div>
-        <div class="slider-row">
-          <input type="range" id="semainesTravail" min="40" max="52" value="47" step="1">
-          <span class="slider-value" id="semainesTravailVal">47 sem</span>
+      <div id="parkingBlock" style="display:none">
+        <div class="input-group">
+          <div class="input-label"><span>🅿️ Parking mensuel économisé</span></div>
+          <div class="slider-row">
+            <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
+            <span class="slider-value" id="parkingMoisVal">0 €</span>
+          </div>
         </div>
       </div>
-      <div class="section-divider">💰 Votre vélo cargo</div>
+
+      <div class="section-divider">🚲 Votre vélo cargo</div>
 
       <div class="input-group">
         <div class="context-toggle">
@@ -149,77 +139,131 @@
       </div>
     </section>
 
-    <!-- ④ CARTES RÉSULTATS — BLOC 2 -->
-    <section class="results">
-      <div class="result-card yellow" id="cardArgent2">
-        <div class="result-icon-wrap">💸</div>
-        <div class="result-content">
-          <div class="result-value" id="valArgent2">–</div>
-          <div class="result-label">économisés par an</div>
-          <div class="result-equiv" id="equivArgent2">–</div>
-        </div>
+    <!-- BIG SAVINGS -->
+    <div class="result-card yellow" id="cardArgent">
+      <div class="result-icon-wrap">💸</div>
+      <div class="result-content">
+        <div class="result-value" id="valArgent">–</div>
+        <div class="result-label">économisés par an</div>
+        <div class="result-equiv" id="equivArgent">–</div>
       </div>
-      <div class="result-card purple" id="cardAmort">
-        <div class="result-icon-wrap">📊</div>
-        <div class="result-content">
-          <div class="result-value" id="valAmort">–</div>
-          <div class="result-label" id="labelAmort">–</div>
-          <div class="result-equiv" id="equivAmort">–</div>
-        </div>
+    </div>
+
+    <!-- LE MATCH -->
+    <section class="match-card">
+      <div class="match-header">
+        <div></div>
+        <div class="match-col-title match-car-title">🚗 Voiture</div>
+        <div class="match-col-title match-bike-title">🚲 Cargo</div>
       </div>
-      <div class="result-card green" id="cardTemps2">
-        <div class="result-icon-wrap">⏱️</div>
-        <div class="result-content">
-          <div class="result-value" id="valTempsVelo2">–</div>
-          <div class="result-label">de plaisir passées à vélo / an</div>
-          <div class="result-equiv" id="valTempsDelta2">–</div>
-        </div>
+
+      <div class="match-row">
+        <div class="match-label">⛽ Carburant</div>
+        <div class="match-car" id="mCarburant">–</div>
+        <div class="match-bike">0 €</div>
       </div>
-      <div class="result-card cyan" id="cardCo2">
-        <div class="result-icon-wrap">🌱</div>
-        <div class="result-content">
-          <div class="result-value" id="valCo2">–</div>
-          <div class="result-label">de CO₂ économisées par an</div>
-          <div class="result-equiv" id="equivCo2">–</div>
-        </div>
+      <div class="match-row">
+        <div class="match-label">🔧 Entretien</div>
+        <div class="match-car" id="mEntretien">–</div>
+        <div class="match-bike" id="mBikeEntretien">–</div>
       </div>
-      <div class="result-card coral" id="cardForme">
-        <div class="result-icon-wrap">💪</div>
-        <div class="result-content">
-          <div class="result-value" id="valForme">–</div>
-          <div class="result-label">la dose d'activité physique recommandée / semaine par l'OMS</div>
-          <div class="result-equiv">et vous êtes en super forme ✨</div>
-        </div>
+      <div class="match-row sell-row" id="rowAssurance">
+        <div class="match-label">🛡️ Assurance</div>
+        <div class="match-car" id="mAssurance">–</div>
+        <div class="match-bike">0 €</div>
       </div>
+      <div class="match-row sell-row" id="rowControle">
+        <div class="match-label">🔍 Contrôle + divers</div>
+        <div class="match-car" id="mControle">–</div>
+        <div class="match-bike">0 €</div>
+      </div>
+      <div class="match-row sell-row" id="rowParking">
+        <div class="match-label">🅿️ Parking</div>
+        <div class="match-car" id="mParking">–</div>
+        <div class="match-bike">0 €</div>
+      </div>
+
+      <div class="match-row match-total-row">
+        <div class="match-label">💰 Total / an</div>
+        <div class="match-car match-total-val" id="mTotalCar">–</div>
+        <div class="match-bike match-total-val" id="mTotalBike">–</div>
+      </div>
+
+      <div class="match-row match-time-row">
+        <div class="match-label">⏱️ Temps / an</div>
+        <div class="match-neutral" id="mTempsCar">–</div>
+        <div class="match-neutral" id="mTempsBike">–</div>
+      </div>
+
+      <p class="match-note" id="matchTimeNote"></p>
+      <p class="match-note match-decote-note">💡 Sans même compter la décote de votre voiture : 1 000 à 2 000 €/an de perdus pendant que le vélo, lui, garde sa valeur.</p>
+
+      <details class="hypotheses-details">
+        <summary>Voir les hypothèses ▾</summary>
+        <div class="hypotheses-grid" id="hypothesesContent"></div>
+      </details>
     </section>
+
+    <!-- AMORT -->
+    <div class="result-card purple" id="cardAmort">
+      <div class="result-icon-wrap">📊</div>
+      <div class="result-content">
+        <div class="result-value" id="valAmort">–</div>
+        <div class="result-label" id="labelAmort">–</div>
+        <div class="result-equiv" id="equivAmort">–</div>
+      </div>
+    </div>
+
+    <!-- BONUS REPLIÉ -->
+    <details class="bonus-section">
+      <summary class="bonus-summary">+ En prime 🌱</summary>
+      <div class="bonus-content">
+        <div class="result-card cyan" id="cardCo2">
+          <div class="result-icon-wrap">🌱</div>
+          <div class="result-content">
+            <div class="result-value" id="valCo2">–</div>
+            <div class="result-label">de CO₂ économisées par an</div>
+            <div class="result-equiv" id="equivCo2">–</div>
+          </div>
+        </div>
+        <div class="result-card coral" id="cardForme">
+          <div class="result-icon-wrap">💪</div>
+          <div class="result-content">
+            <div class="result-value" id="valForme">–</div>
+            <div class="result-label">la dose d'activité physique recommandée / semaine par l'OMS</div>
+            <div class="result-equiv">et vous êtes en super forme ✨</div>
+          </div>
+        </div>
+      </div>
+    </details>
 
     <button class="share-btn" id="shareBtn">📤 Partager mon résultat</button>
 
     <section class="seo-content">
       <h2>Votre voiture vous coûte combien, vraiment ?</h2>
-      <p>0,52 €/km en moyenne pour un SUV thermique - carburant, assurance, entretien, stationnement et décote inclus. Sur 10 000 km par an, c'est 5 200 € qui partent en fumée. Littéralement.</p>
+      <p>Carburant, entretien, assurance, stationnement — sans même compter la décote. Sur 10 000 km par an, un SUV thermique coûte souvent plus de 3 000 € rien qu'en frais courants.</p>
       <h2>Le vélo cargo, c'est sérieux ou c'est pour les bobos ?</h2>
-      <p>C'est sérieux. Des milliers de familles l'utilisent chaque jour pour l'école, le boulot et les courses. Un vélo cargo charge 100 kg, roule à 25 km/h et se gare devant la porte. La voiture attend un parking.</p>
+      <p>C'est sérieux. Des milliers de familles l'utilisent chaque jour pour l'école, le boulot et les courses. Un vélo cargo charge 100 kg, roule à 25 km/h et se gare devant la porte.</p>
       <h2>Et les émissions de CO₂ dans tout ça ?</h2>
-      <p>Une voiture thermique émet environ 180g de CO₂ par kilomètre. Un vélo cargo ? 10g - fabrication comprise, amortie sur 10 ans. Chaque trajet à vélo, c'est une décision concrète, pas un hashtag.</p>
-      <h2>À Paris, Nantes, Lyon - le vélo cargo est-il plus rapide ?</h2>
-      <p>En ville, oui. Aux heures de pointe, le vélo cargo rivalise avec la voiture sur 80 % des trajets de moins de 8 km. Pas de bouchon, pas de parking, pas de stress. Juste de l'air frais.</p>
+      <p>Une voiture thermique émet environ 180g de CO₂ par kilomètre. Un vélo cargo ? 10g — fabrication comprise, amortie sur 10 ans.</p>
+      <h2>À Paris, Nantes, Lyon — le vélo cargo est-il plus rapide ?</h2>
+      <p>En ville, oui. À 17 km/h de moyenne réelle, le vélo cargo bat la voiture (14 km/h en circulation) sur la quasi-totalité des trajets urbains. Zéro bouchon, zéro parking.</p>
     </section>
 
     <section class="faq">
       <h2>Questions fréquentes</h2>
       <h3>Combien économise-t-on vraiment avec un vélo cargo ?</h3>
-      <p>Entre 800 € et 3 500 € par an selon votre trajet et votre véhicule actuel. Utilisez le simulateur ci-dessus - les chiffres sont les vôtres, pas des moyennes.</p>
+      <p>Entre 500 € et 4 000 € par an selon votre trajet, votre véhicule et si vous gardez ou vendez votre voiture. Utilisez le simulateur — les chiffres sont les vôtres.</p>
       <h3>Un vélo cargo peut-il vraiment remplacer une voiture ?</h3>
-      <p>Pour les trajets du quotidien, oui. École, supermarché, boulot. Pas pour déménager ou partir en vacances avec les skis - mais là, vous avez compris.</p>
+      <p>Pour les trajets du quotidien, oui. École, supermarché, boulot. Pas pour déménager ou partir en vacances avec les skis.</p>
       <h3>Quel est le vrai coût d'un vélo cargo électrique ?</h3>
-      <p>Entre 0,03 € et 0,08 € par km : recharge électrique + entretien. Contre 0,52 € en voiture. L'amortissement commence dès les premières semaines d'usage régulier.</p>
+      <p>Environ 0,05 € par km en entretien. L'achat s'amortit en quelques mois d'usage régulier selon votre trajet.</p>
     </section>
 
     <p class="credit credit-footer">Outil proposé par les vélos <a href="https://etnicycles.com" target="_blank">etnicycles.com</a></p>
   </main>
 
   <div class="toast" id="toast">✅ Lien copié !</div>
-  <script src="simulator.js?v=3"></script>
+  <script src="simulator.js?v=4"></script>
 </body>
 </html>

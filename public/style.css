@@ -15,6 +15,7 @@
   --green-dark: #16A34A;
   --blue: #3B82F6;
   --blue-dark: #1D4ED8;
+  --red: #DC2626;
   --bg: #FAF8FF;
   --text: #1F2937;
   --text-secondary: #6B7280;
@@ -48,7 +49,6 @@ header {
   justify-content: space-between;
 }
 
-/* Ninja centré sur la largeur totale du header */
 .header-inner .ninja-badge {
   position: absolute;
   left: 50%;
@@ -118,17 +118,6 @@ header {
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-.settings-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  transition: transform 0.2s;
-}
-.settings-btn:hover { transform: rotate(30deg); }
-
 /* MAIN */
 main {
   max-width: 480px;
@@ -137,14 +126,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.tagline {
-  font-size: 1.15rem;
-  font-weight: 800;
-  text-align: center;
-  color: var(--primary-dark);
-  line-height: 1.3;
 }
 
 /* INPUTS CARD */
@@ -167,7 +148,6 @@ main {
   font-weight: 800;
   font-size: 0.95rem;
 }
-
 
 /* SLIDER */
 .slider-row {
@@ -231,13 +211,17 @@ input[type="range"]::-webkit-slider-thumb:active {
   color: var(--primary-dark);
 }
 
-/* RESULT CARDS */
-.results {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+/* SÉPARATEUR */
+.section-divider {
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--primary-dark);
+  padding-top: 4px;
+  border-top: 2px dashed #DDD6FE;
+  margin-top: 4px;
 }
 
+/* RESULT CARDS */
 .result-card {
   width: 100%;
   border-radius: 20px;
@@ -259,18 +243,11 @@ input[type="range"]::-webkit-slider-thumb:active {
 }
 .result-card:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
 
-.result-card.yellow {
-  background: linear-gradient(135deg, #F7B500 0%, #FFD60A 100%);
-  color: #1A1000;
-}
-.result-card.green {
-  background: linear-gradient(135deg, #22C7D6 0%, #159AAA 100%);
-  color: white;
-}
-.result-card.coral {
-  background: linear-gradient(135deg, #FB5C7A 0%, #D03055 100%);
-  color: white;
-}
+.result-card.yellow  { background: linear-gradient(135deg, #F7B500 0%, #FFD60A 100%); color: #1A1000; }
+.result-card.green   { background: linear-gradient(135deg, #22C7D6 0%, #159AAA 100%); color: white; }
+.result-card.coral   { background: linear-gradient(135deg, #FB5C7A 0%, #D03055 100%); color: white; }
+.result-card.purple  { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; }
+.result-card.cyan    { background: linear-gradient(135deg, #4ADE80 0%, #16A34A 100%); color: white; }
 
 .result-icon-wrap {
   width: 52px;
@@ -309,44 +286,175 @@ input[type="range"]::-webkit-slider-thumb:active {
   background: rgba(255,255,255,0.25);
   padding: 3px 10px;
   border-radius: 20px;
-  font-style: normal;
 }
 
-@keyframes popIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
-}
-
-.result-card.bump {
-  animation: bump 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
 @keyframes bump {
   0%   { transform: scale(1); }
   50%  { transform: scale(1.04); }
   100% { transform: scale(1); }
 }
+.result-card.bump {
+  animation: bump 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-/* SÉPARATEUR DE SECTION INLINE */
-.section-divider {
+/* LE MATCH */
+.match-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.08);
+}
+
+.match-header {
+  display: grid;
+  grid-template-columns: 44% 28% 28%;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 2px;
+}
+
+.match-col-title {
   font-weight: 900;
-  font-size: 1rem;
-  color: var(--primary-dark);
-  padding-top: 4px;
-  border-top: 2px dashed #DDD6FE;
+  font-size: 0.88rem;
+  text-align: right;
+}
+
+.match-car-title  { color: var(--red); }
+.match-bike-title { color: var(--green-dark); }
+
+.match-row {
+  display: grid;
+  grid-template-columns: 44% 28% 28%;
+  padding: 7px 0;
+  border-bottom: 1px solid #F3F4F6;
+  align-items: center;
+}
+
+/* Les sell-row sont cachées par défaut via JS */
+.sell-row { display: none; }
+
+.match-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.match-car {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--red);
+  text-align: right;
+}
+
+.match-bike {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  text-align: right;
+}
+
+.match-neutral {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: right;
+}
+
+.match-total-row {
+  border-top: 2px solid var(--border) !important;
+  border-bottom: none !important;
+  padding-top: 10px !important;
   margin-top: 4px;
 }
 
-
-/* CARD PURPLE → BLEU pour amortissement */
-.result-card.purple {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-  color: white;
+.match-total-row .match-label {
+  font-weight: 900;
+  color: var(--text);
+  font-size: 0.88rem;
 }
 
-/* CARD CYAN → VERT pour CO₂ */
-.result-card.cyan {
-  background: linear-gradient(135deg, #4ADE80 0%, #16A34A 100%);
-  color: white;
+.match-total-val {
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+}
+
+.match-time-row {
+  border-bottom: none !important;
+}
+
+.match-time-row .match-label {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.match-note {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #F9FAFB;
+  border-radius: 10px;
+}
+
+.match-decote-note {
+  color: var(--primary-dark);
+  background: #F5F3FF;
+}
+
+/* HYPOTHÈSES */
+.hypotheses-details {
+  margin-top: 12px;
+}
+
+.hypotheses-details summary {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+  list-style: none;
+}
+.hypotheses-details summary::-webkit-details-marker { display: none; }
+
+.hypotheses-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* BONUS SECTION */
+.bonus-section {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(124,58,237,0.08);
+  overflow: hidden;
+}
+
+.bonus-summary {
+  display: block;
+  padding: 16px 20px;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--primary-dark);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.bonus-summary::-webkit-details-marker { display: none; }
+
+.bonus-content {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* SHARE BUTTON */
@@ -370,7 +478,7 @@ input[type="range"]::-webkit-slider-thumb:active {
   box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
 }
 
-/* SELECT INLINE */
+/* SELECT */
 select {
   width: 100%;
   padding: 10px 14px;
@@ -384,7 +492,6 @@ select {
   color: var(--text);
 }
 
-
 /* SEO HEADER */
 .seo-header {
   text-align: center;
@@ -396,7 +503,6 @@ select {
   color: var(--primary-dark);
   line-height: 1.3;
   margin-bottom: 6px;
-  text-align: center;
 }
 .seo-header p {
   font-size: 0.75rem;
@@ -406,9 +512,7 @@ select {
 }
 
 /* SEO CONTENT & FAQ */
-.seo-content, .faq {
-  padding: 4px 8px;
-}
+.seo-content, .faq { padding: 4px 8px; }
 
 .credit-footer {
   border-top: 1px solid var(--border);
@@ -432,22 +536,16 @@ select {
   font-weight: 700;
   color: var(--text-secondary);
   line-height: 1.5;
-  margin: 0;
 }
 
 /* CREDIT */
 .credit {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-secondary);
 }
-.credit a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 800;
-}
+.credit a { color: var(--primary); text-decoration: none; font-weight: 800; }
 .credit a:hover { opacity: 0.75; }
 
 /* TOAST */
@@ -475,13 +573,11 @@ select {
     padding: 5px 12px 5px 5px;
     border-radius: 22px;
   }
-  .ninja-avatar {
-    width: 34px;
-    height: 34px;
-    font-size: 1.1rem;
-  }
-  .ninja-name { font-size: 0.85rem; }
+  .ninja-avatar { width: 34px; height: 34px; font-size: 1.1rem; }
+  .ninja-name  { font-size: 0.85rem; }
   .ninja-level { font-size: 0.6rem; }
-  .logo { font-size: 0.9rem; }
+  .logo        { font-size: 0.9rem; }
   .result-value { font-size: 1.8rem; }
+  .match-label  { font-size: 0.72rem; }
+  .match-car, .match-bike, .match-neutral { font-size: 0.8rem; }
 }
