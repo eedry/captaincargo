@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulateur Vélo Cargo | Économies, CO₂ et comparaison voiture</title>
-  <meta name="description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique. Comparaison du coût réel, du CO₂ et des temps de trajet.">
+  <meta name="description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique.">
   <meta name="keywords" content="vélo cargo, simulateur, économies voiture, mobilité douce, comparateur transport">
   <meta name="author" content="Cargo Ninja">
   <link rel="canonical" href="https://app.cargoninja.app">
@@ -49,9 +49,8 @@
       <p>Découvrez combien vous pouvez économiser chaque année en remplaçant une partie de vos trajets en voiture par un vélo cargo électrique.</p>
     </div>
 
-    <!-- SLIDERS TRAJET & VOITURE -->
-    <section class="inputs-card" id="inputsCard">
-
+    <!-- ① SLIDERS TRAJET -->
+    <section class="inputs-card">
       <div class="input-group">
         <div class="input-label">
           <span>📍 Km par jour <small style="font-weight:700;opacity:0.6">(A/R compris)</small></span>
@@ -61,7 +60,6 @@
           <span class="slider-value" id="kmValue">24 km</span>
         </div>
       </div>
-
       <div class="input-group">
         <div class="input-label"><span>📅 Jours par semaine</span></div>
         <div class="slider-row">
@@ -69,7 +67,6 @@
           <span class="slider-value" id="joursValue">5 j</span>
         </div>
       </div>
-
       <div class="input-group">
         <div class="input-label"><span>🗺️ Contexte</span></div>
         <div class="context-toggle">
@@ -77,45 +74,9 @@
           <button class="ctx-btn" id="btnPeriurbain">🌳 Périurbain</button>
         </div>
       </div>
-
-      <div class="input-group">
-        <div class="input-label"><span>🚗 Mon véhicule actuel</span></div>
-        <select id="vehiculeSelect">
-          <option value="0.32">Citadine thermique — 0,32 €/km</option>
-          <option value="0.41">Berline thermique — 0,41 €/km</option>
-          <option value="0.52" selected>SUV thermique — 0,52 €/km</option>
-          <option value="0.29">Citadine électrique — 0,29 €/km</option>
-          <option value="0.38">SUV électrique — 0,38 €/km</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
-        <div class="slider-row">
-          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
-          <span class="slider-value" id="parkingMoisVal">0 €</span>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <div class="input-label"><span>🏖️ Semaines travaillées / an</span></div>
-        <div class="slider-row">
-          <input type="range" id="semainesTravail" min="40" max="52" value="47" step="1">
-          <span class="slider-value" id="semainesTravailVal">47 sem</span>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <div class="input-label"><span>⚡ Vitesse voiture en ville</span></div>
-        <div class="slider-row">
-          <input type="range" id="vitesseVoiture" min="10" max="50" value="14" step="1">
-          <span class="slider-value" id="vitesseVoitureVal">14 km/h</span>
-        </div>
-      </div>
-
     </section>
 
-    <!-- RÉSULTATS — BLOC 1 (après sliders trajet) -->
+    <!-- ② CARTES RÉSULTATS — BLOC 1 (jaune + temps) -->
     <section class="results">
       <div class="result-card yellow" id="cardArgent">
         <div class="result-icon-wrap">💸</div>
@@ -133,35 +94,44 @@
           <div class="result-equiv" id="valTempsDelta">–</div>
         </div>
       </div>
-      <div class="result-card purple" id="cardAmort">
-        <div class="result-icon-wrap">📊</div>
-        <div class="result-content">
-          <div class="result-value" id="valAmort">–</div>
-          <div class="result-label" id="labelAmort">–</div>
-          <div class="result-equiv" id="equivAmort">–</div>
-        </div>
-      </div>
-      <div class="result-card cyan" id="cardCo2">
-        <div class="result-icon-wrap">🌱</div>
-        <div class="result-content">
-          <div class="result-value" id="valCo2">–</div>
-          <div class="result-label">de CO₂ évitées / an</div>
-          <div class="result-equiv" id="equivCo2">–</div>
-        </div>
-      </div>
-      <div class="result-card coral" id="cardForme">
-        <div class="result-icon-wrap">💪</div>
-        <div class="result-content">
-          <div class="result-value" id="valForme">–</div>
-          <div class="result-label">de la dose OMS / semaine</div>
-          <div class="result-equiv">et vous êtes en super forme ✨</div>
-        </div>
-      </div>
     </section>
 
-    <!-- SLIDERS VÉLO CARGO -->
-    <section class="inputs-card amort-section" id="amortSection">
-      <div class="amort-section-title">💰 Votre vélo cargo</div>
+    <!-- ③ PARAMS FINANCIERS & VÉLO CARGO -->
+    <section class="inputs-card">
+      <div class="input-group">
+        <div class="input-label"><span>🚗 Mon véhicule actuel</span></div>
+        <select id="vehiculeSelect">
+          <option value="0.32">Citadine thermique — 0,32 €/km</option>
+          <option value="0.41">Berline thermique — 0,41 €/km</option>
+          <option value="0.52" selected>SUV thermique — 0,52 €/km</option>
+          <option value="0.29">Citadine électrique — 0,29 €/km</option>
+          <option value="0.38">SUV électrique — 0,38 €/km</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
+        <div class="slider-row">
+          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
+          <span class="slider-value" id="parkingMoisVal">0 €</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-label"><span>🏖️ Semaines travaillées / an</span></div>
+        <div class="slider-row">
+          <input type="range" id="semainesTravail" min="40" max="52" value="47" step="1">
+          <span class="slider-value" id="semainesTravailVal">47 sem</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-label"><span>⚡ Vitesse voiture en ville</span></div>
+        <div class="slider-row">
+          <input type="range" id="vitesseVoiture" min="10" max="50" value="14" step="1">
+          <span class="slider-value" id="vitesseVoitureVal">14 km/h</span>
+        </div>
+      </div>
+
+      <div class="section-divider">💰 Votre vélo cargo</div>
+
       <div class="input-group">
         <div class="context-toggle">
           <button class="ctx-btn active" id="btnAchat">🛒 Achat</button>
@@ -195,7 +165,7 @@
       </div>
     </section>
 
-    <!-- RÉSULTATS — BLOC 2 (après sliders vélo) -->
+    <!-- ④ CARTES RÉSULTATS — BLOC 2 (jaune + temps + [vert|rose]) -->
     <section class="results">
       <div class="result-card yellow" id="cardArgent2">
         <div class="result-icon-wrap">💸</div>
@@ -213,31 +183,37 @@
           <div class="result-equiv" id="valTempsDelta2">–</div>
         </div>
       </div>
-      <div class="result-card purple" id="cardAmort2">
-        <div class="result-icon-wrap">📊</div>
-        <div class="result-content">
-          <div class="result-value" id="valAmort2">–</div>
-          <div class="result-label" id="labelAmort2">–</div>
-          <div class="result-equiv" id="equivAmort2">–</div>
+      <div class="results-half">
+        <div class="result-card cyan" id="cardCo2">
+          <div class="result-content">
+            <div class="result-icon-wrap-sm">🌱</div>
+            <div class="result-value" id="valCo2">–</div>
+            <div class="result-label">CO₂ évitées / an</div>
+            <div class="result-equiv" id="equivCo2">–</div>
+          </div>
         </div>
-      </div>
-      <div class="result-card cyan" id="cardCo22">
-        <div class="result-icon-wrap">🌱</div>
-        <div class="result-content">
-          <div class="result-value" id="valCo22">–</div>
-          <div class="result-label">de CO₂ évitées / an</div>
-          <div class="result-equiv" id="equivCo22">–</div>
-        </div>
-      </div>
-      <div class="result-card coral" id="cardForme2">
-        <div class="result-icon-wrap">💪</div>
-        <div class="result-content">
-          <div class="result-value" id="valForme2">–</div>
-          <div class="result-label">de la dose OMS / semaine</div>
-          <div class="result-equiv">et vous êtes en super forme ✨</div>
+        <div class="result-card coral" id="cardForme">
+          <div class="result-content">
+            <div class="result-icon-wrap-sm">💪</div>
+            <div class="result-value" id="valForme">–</div>
+            <div class="result-label">dose OMS / sem</div>
+            <div class="result-equiv">super forme ✨</div>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- ⑤ CARTE AMORT + PARTAGER -->
+    <div class="results">
+      <div class="result-card purple" id="cardAmort">
+        <div class="result-icon-wrap">📊</div>
+        <div class="result-content">
+          <div class="result-value" id="valAmort">–</div>
+          <div class="result-label" id="labelAmort">–</div>
+          <div class="result-equiv" id="equivAmort">–</div>
+        </div>
+      </div>
+    </div>
 
     <button class="share-btn" id="shareBtn">📤 Partager mon résultat</button>
 
@@ -263,7 +239,6 @@
     </section>
 
     <p class="credit credit-footer">Outil proposé par les vélos <a href="https://etnicycles.com" target="_blank">etnicycles.com</a></p>
-
   </main>
 
   <div class="toast" id="toast">✅ Lien copié !</div>

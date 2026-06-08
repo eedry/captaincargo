@@ -6,7 +6,6 @@ const NINJA_LEVELS = [
   { min: 300, label: 'Ninja en Chef',  level: 4, emoji: '🥷', img: null },
   { min: 500, label: 'Ninja GOAT 🐐',  level: 5, emoji: '🥷', img: null },
 ];
-
 let currentNinjaLevel = 0;
 
 function updateNinja(minSemaine) {
@@ -16,47 +15,38 @@ function updateNinja(minSemaine) {
   }
   const ninja = NINJA_LEVELS[idx];
   const badge = document.getElementById('ninjaBadge');
-
   if (idx !== currentNinjaLevel) {
     badge.classList.remove('levelup');
     void badge.offsetWidth;
     badge.classList.add('levelup');
     currentNinjaLevel = idx;
   }
-
   document.getElementById('ninjaLevel').textContent = `Niv. ${ninja.level}`;
-  document.getElementById('ninjaName').textContent   = ninja.label;
-
+  document.getElementById('ninjaName').textContent  = ninja.label;
   const avatar = document.getElementById('ninjaAvatar');
-  if (ninja.img) {
-    avatar.innerHTML = `<img src="${ninja.img}" alt="${ninja.label}">`;
-  } else {
-    avatar.textContent = ninja.emoji;
-  }
+  avatar.innerHTML = ninja.img ? `<img src="${ninja.img}" alt="${ninja.label}">` : ninja.emoji;
 }
 
-// --- CONSTANTES PAR DÉFAUT ---
+// --- CONSTANTES ---
 const DEFAULTS = {
   coutKm: 0.52,
   vitesseVoiture: 14,
   vitessevelo: 15,
-  activiteOms: 150,   // fixé OMS, non modifiable
   semainesTravail: 47,
   parkingMois: 0,
 };
 
-// Traductions CO₂ économisé → équivalences fun
-const CO2_EQUIVALENCES = [
+const CO2_EQUIV = [
   { max: 0.005, label: "= 1 image générée par IA 🤖" },
   { max: 0.25,  label: "= 1 A/R boulangerie en voiture 🥖" },
-  { max: 0.5,   label: "= 1 café expresso (production + transport) ☕" },
+  { max: 0.5,   label: "= 1 café (production + transport) ☕" },
   { max: 3,     label: "= 1 Big Mac 🍔" },
   { max: 6.5,   label: "= 1 poulet fermier du marché 🐔" },
   { max: 8,     label: "= 1 steak de bœuf 250g 🥩" },
   { max: 35,    label: "= fabrication d'un jean neuf 👖" },
   { max: 50,    label: "= 1 smartphone neuf (fabrication) 📱" },
   { max: 120,   label: "= 40 burgers 🍔" },
-  { max: 180,   label: "= A/R Paris-Rennes chez les parents en voiture 🚗" },
+  { max: 180,   label: "= A/R Paris-Rennes en voiture 🚗" },
   { max: 320,   label: "= fabrication d'une grande TV 55\" 📺" },
   { max: 420,   label: "= A/R Paris-Berlin en road trip 🚗" },
   { max: 700,   label: "= fabrication d'un canapé 3 places 🛋️" },
@@ -66,8 +56,7 @@ const CO2_EQUIVALENCES = [
   { max: Infinity, label: "= 1 vache entière 🐄" },
 ];
 
-// Traductions économies → expériences
-const EQUIVALENCES = [
+const ARGENT_EQUIV = [
   { max: 200,  label: "= un bon resto en amoureux 🍷" },
   { max: 350,  label: "= une caisse de bon vin 🍾" },
   { max: 420,  label: "= un pass festival (Hellfest, Solidays…) 🎸" },
@@ -85,8 +74,9 @@ const EQUIVALENCES = [
 // --- ÉTAT ---
 let params = { ...DEFAULTS };
 let contexte = 'urbain';
+let amortMode = 'achat';
 
-// --- DOM : TRAJET ---
+// --- DOM ---
 const kmSlider      = document.getElementById('kmSlider');
 const kmValue       = document.getElementById('kmValue');
 const joursSlider   = document.getElementById('joursSlider');
@@ -94,7 +84,6 @@ const joursValue    = document.getElementById('joursValue');
 const btnUrbain     = document.getElementById('btnUrbain');
 const btnPeriurbain = document.getElementById('btnPeriurbain');
 
-// --- DOM : PARAMS INLINE ---
 const vehiculeSelect       = document.getElementById('vehiculeSelect');
 const parkingSlider        = document.getElementById('parkingMois');
 const parkingVal           = document.getElementById('parkingMoisVal');
@@ -103,12 +92,6 @@ const semainesVal          = document.getElementById('semainesTravailVal');
 const vitesseVoitureSlider = document.getElementById('vitesseVoiture');
 const vitesseVoitureVal    = document.getElementById('vitesseVoitureVal');
 
-// --- DOM : RÉSULTATS ---
-const shareBtn = document.getElementById('shareBtn');
-const toast    = document.getElementById('toast');
-
-// --- DOM : AMORTISSEMENT ---
-let amortMode = 'achat';
 const btnAchat           = document.getElementById('btnAchat');
 const btnLocation        = document.getElementById('btnLocation');
 const amortAchatBlock    = document.getElementById('amortAchatBlock');
@@ -120,168 +103,136 @@ const dureeAmortVal      = document.getElementById('dureeAmortVal');
 const loyerSlider        = document.getElementById('loyerMensuel');
 const loyerVal           = document.getElementById('loyerMensuelVal');
 
+const shareBtn = document.getElementById('shareBtn');
+const toast    = document.getElementById('toast');
 
 // --- HELPERS ---
-function getEquivalence(euros) {
-  return EQUIVALENCES.find(e => euros <= e.max)?.label || EQUIVALENCES.at(-1).label;
-}
-function formatEuros(n) {
-  return n.toLocaleString('fr-FR') + ' €';
-}
-function bump(card) {
-  card.classList.remove('bump');
-  void card.offsetWidth;
-  card.classList.add('bump');
-}
+const fmt = n => n.toLocaleString('fr-FR') + ' €';
+const bump = card => { card.classList.remove('bump'); void card.offsetWidth; card.classList.add('bump'); };
+const getArgentEquiv = e => ARGENT_EQUIV.find(x => e <= x.max)?.label || ARGENT_EQUIV.at(-1).label;
+const getCo2Equiv   = c => CO2_EQUIV.find(x => c <= x.max)?.label || CO2_EQUIV.at(-1).label;
 
 // --- CALCUL ---
 function calculate() {
   const kmJour = parseInt(kmSlider.value);
   const jours  = parseInt(joursSlider.value);
+  const vitV   = contexte === 'urbain' ? params.vitesseVoiture : params.vitesseVoiture * 2.2;
+  const vitVelo = params.vitessevelo;
+  const kmAn   = kmJour * jours * params.semainesTravail;
 
-  const vitVoiture = contexte === 'urbain' ? params.vitesseVoiture : params.vitesseVoiture * 2.2;
-  const vitVelo    = params.vitessevelo;
-  const kmAn = kmJour * jours * params.semainesTravail;
+  const economie     = Math.max(0, Math.round(kmAn * params.coutKm + params.parkingMois * 12 - 200));
+  const minVoitureAn = (kmAn / vitV) * 60;
+  const minVeloAn    = (kmAn / vitVelo) * 60;
+  const diffMin      = minVoitureAn - minVeloAn;
+  const minVeloSem   = (kmJour * jours / vitVelo) * 60;
+  const ratio        = Math.round(minVeloSem / 150 * 10) / 10;
+  const co2          = Math.round((0.180 - 0.010) * kmAn);
 
-  // 1. ARGENT
-  const parkingAn     = params.parkingMois * 12;
-  const coutVoitureAn = kmAn * params.coutKm + parkingAn;
-  const coutVeloAn    = 200;
-  const economie      = Math.max(0, Math.round(coutVoitureAn - coutVeloAn));
-
-  // 2. TEMPS
-  const minVoitureAn  = (kmAn / vitVoiture) * 60;
-  const minVeloAn     = (kmAn / vitVelo) * 60;
-  const diffMin       = minVoitureAn - minVeloAn;
-  const tempsPositif  = diffMin > 0;
-
-  // 3. FORME (OMS fixé à 150 min/sem)
-  const minVeloSemaine = (kmJour * jours / vitVelo) * 60;
-  const ratio = Math.round(minVeloSemaine / 150 * 10) / 10;
-
-  // 4. CO₂
-  const co2Economise = Math.round((0.180 - 0.010) * kmAn);
-  const arbres = Math.round(co2Economise / 25);
-
-  return { economie, diffMin, minVeloAn, tempsPositif, ratio, minVeloSemaine, co2Economise, arbres };
+  return { economie, minVeloAn, diffMin, ratio, minVeloSem, co2 };
 }
 
-// --- MISE À JOUR AMORTISSEMENT ---
 function calcAmort(economieMensuelle) {
   if (amortMode === 'achat') {
-    const prix    = parseInt(prixVeloSlider.value);
-    const duree   = parseInt(dureeAmortSlider.value);
-    const gainNet = economieMensuelle - prix / duree;
-    if (gainNet >= 0) {
-      return { val: '+' + Math.round(gainNet) + ' €/mois', label: 'de gain net dès maintenant', equiv: `vélo amorti sur ${duree} mois · vous êtes gagnant 🎉` };
-    } else {
-      const moisAmort = Math.ceil(prix / economieMensuelle);
-      return { val: moisAmort + ' mois', label: 'pour amortir le vélo cargo', equiv: `ensuite +${Math.round(economieMensuelle)} €/mois dans la poche` };
-    }
+    const prix  = parseInt(prixVeloSlider.value);
+    const duree = parseInt(dureeAmortSlider.value);
+    const gain  = economieMensuelle - prix / duree;
+    if (gain >= 0) return { val: '+' + Math.round(gain) + ' €/mois', label: 'de gain net dès maintenant', equiv: `amorti sur ${duree} mois · vous êtes gagnant 🎉` };
+    return { val: Math.ceil(prix / economieMensuelle) + ' mois', label: 'pour amortir le vélo', equiv: `ensuite +${Math.round(economieMensuelle)} €/mois dans la poche` };
   } else {
-    const loyer   = parseInt(loyerSlider.value);
-    const gainNet = economieMensuelle - loyer;
-    if (gainNet >= 0) {
-      return { val: '+' + Math.round(gainNet) + ' €/mois', label: 'de gain net (loyer inclus)', equiv: 'la location se finance toute seule 🎉' };
-    } else {
-      return { val: Math.round(Math.abs(gainNet)) + ' €/mois', label: 'restent à votre charge après économies', equiv: `soit ${Math.round(Math.abs(gainNet) * 12)} €/an nets` };
-    }
+    const loyer = parseInt(loyerSlider.value);
+    const gain  = economieMensuelle - loyer;
+    if (gain >= 0) return { val: '+' + Math.round(gain) + ' €/mois', label: 'de gain net (loyer inclus)', equiv: 'la location se finance toute seule 🎉' };
+    return { val: Math.round(Math.abs(gain)) + ' €/mois', label: 'restent à votre charge', equiv: `soit ${Math.round(Math.abs(gain) * 12)} €/an nets` };
   }
-}
-
-function setAmortCard(suffix, a) {
-  document.getElementById('valAmort' + suffix).textContent   = a.val;
-  document.getElementById('labelAmort' + suffix).textContent = a.label;
-  document.getElementById('equivAmort' + suffix).textContent = a.equiv;
-  bump(document.getElementById('cardAmort' + suffix));
 }
 
 // --- MISE À JOUR UI ---
 function updateUI() {
-  const { economie, diffMin, minVeloAn, tempsPositif, ratio, minVeloSemaine, co2Economise } = calculate();
+  const { economie, minVeloAn, diffMin, ratio, minVeloSem, co2 } = calculate();
 
   const heuresVelo  = Math.round(minVeloAn / 60);
   const heuresDelta = Math.round(Math.abs(diffMin) / 60);
-  const tempsDelta  = tempsPositif ? `dont ${heuresDelta} h économisées vs voiture 🚗` : `0 h économisées vs voiture 🚗`;
-  const co2Txt = co2Economise >= 1000
-    ? (co2Economise / 1000).toFixed(1).replace('.', ',') + ' t'
-    : co2Economise + ' kg';
-  const co2Equiv = CO2_EQUIVALENCES.find(e => co2Economise <= e.max)?.label || CO2_EQUIVALENCES.at(-1).label;
-  const equivA   = getEquivalence(economie);
+  const tempsDelta  = diffMin > 0
+    ? `dont ${heuresDelta} h économisées vs voiture 🚗`
+    : `0 h économisées vs voiture 🚗`;
+  const co2Txt   = co2 >= 1000 ? (co2/1000).toFixed(1).replace('.', ',') + ' t' : co2 + ' kg';
   const amort    = calcAmort(economie / 12);
 
-  // Mise à jour des deux blocs de cartes
-  ['', '2'].forEach(s => {
-    // Argent
-    document.getElementById('valArgent' + s).textContent  = formatEuros(economie);
-    document.getElementById('equivArgent' + s).textContent = equivA;
-    bump(document.getElementById('cardArgent' + s));
-    // Temps
-    document.getElementById('valTempsVelo' + s).textContent  = heuresVelo + ' h';
-    document.getElementById('valTempsDelta' + s).textContent = tempsDelta;
-    bump(document.getElementById('cardTemps' + s));
-    // Amort
-    setAmortCard(s, amort);
-    // CO₂
-    document.getElementById('valCo2' + (s === '2' ? '2' : '')).textContent  = co2Txt;
-    document.getElementById('equivCo2' + (s === '2' ? '2' : '')).textContent = co2Equiv;
-    bump(document.getElementById('cardCo2' + (s === '2' ? '2' : '')));
-    // Forme
-    document.getElementById('valForme' + s).textContent = ratio + '×';
-    bump(document.getElementById('cardForme' + s));
-  });
+  // --- Bloc 1 : jaune + temps ---
+  document.getElementById('valArgent').textContent   = fmt(economie);
+  document.getElementById('equivArgent').textContent = getArgentEquiv(economie);
+  bump(document.getElementById('cardArgent'));
 
-  // Ninja
-  updateNinja(minVeloSemaine);
+  document.getElementById('valTempsVelo').textContent  = heuresVelo + ' h';
+  document.getElementById('valTempsDelta').textContent = tempsDelta;
+  bump(document.getElementById('cardTemps'));
 
-  // Labels sliders
+  // --- Bloc 2 : jaune + temps + vert + rose ---
+  document.getElementById('valArgent2').textContent   = fmt(economie);
+  document.getElementById('equivArgent2').textContent = getArgentEquiv(economie);
+  bump(document.getElementById('cardArgent2'));
+
+  document.getElementById('valTempsVelo2').textContent  = heuresVelo + ' h';
+  document.getElementById('valTempsDelta2').textContent = tempsDelta;
+  bump(document.getElementById('cardTemps2'));
+
+  document.getElementById('valCo2').textContent   = co2Txt;
+  document.getElementById('equivCo2').textContent = getCo2Equiv(co2);
+  bump(document.getElementById('cardCo2'));
+
+  document.getElementById('valForme').textContent = ratio + '×';
+  bump(document.getElementById('cardForme'));
+
+  // --- Amort ---
+  document.getElementById('valAmort').textContent   = amort.val;
+  document.getElementById('labelAmort').textContent = amort.label;
+  document.getElementById('equivAmort').textContent = amort.equiv;
+  bump(document.getElementById('cardAmort'));
+
+  // --- Ninja ---
+  updateNinja(minVeloSem);
+
+  // --- Labels sliders ---
   kmValue.textContent    = kmSlider.value + ' km';
   joursValue.textContent = joursSlider.value + ' j';
 }
 
-// --- EVENTS : TRAJET ---
+// --- EVENTS ---
 kmSlider.addEventListener('input', updateUI);
 joursSlider.addEventListener('input', updateUI);
 
 btnUrbain.addEventListener('click', () => {
   contexte = 'urbain';
-  btnUrbain.classList.add('active');
-  btnPeriurbain.classList.remove('active');
+  btnUrbain.classList.add('active'); btnPeriurbain.classList.remove('active');
   updateUI();
 });
 btnPeriurbain.addEventListener('click', () => {
   contexte = 'periurbain';
-  btnPeriurbain.classList.add('active');
-  btnUrbain.classList.remove('active');
+  btnPeriurbain.classList.add('active'); btnUrbain.classList.remove('active');
   updateUI();
 });
 
-// --- EVENTS : PARAMS INLINE ---
 vehiculeSelect.addEventListener('change', () => {
   params.coutKm = parseFloat(vehiculeSelect.value);
   updateUI();
 });
-
 parkingSlider.addEventListener('input', () => {
   const v = parseInt(parkingSlider.value);
   parkingVal.textContent = v === 0 ? '0 €' : v + ' €/mois';
   params.parkingMois = v;
   updateUI();
 });
-
 semainesSlider.addEventListener('input', () => {
   params.semainesTravail = parseInt(semainesSlider.value);
   semainesVal.textContent = semainesSlider.value + ' sem';
   updateUI();
 });
-
 vitesseVoitureSlider.addEventListener('input', () => {
   params.vitesseVoiture = parseInt(vitesseVoitureSlider.value);
   vitesseVoitureVal.textContent = vitesseVoitureSlider.value + ' km/h';
   updateUI();
 });
 
-// --- EVENTS : AMORTISSEMENT ---
 btnAchat.addEventListener('click', () => {
   amortMode = 'achat';
   btnAchat.classList.add('active'); btnLocation.classList.remove('active');
@@ -310,14 +261,9 @@ loyerSlider.addEventListener('input', () => {
 // --- PARTAGE ---
 shareBtn.addEventListener('click', () => {
   const { economie, ratio, minVeloAn } = calculate();
-  const km   = kmSlider.value;
-  const jours = joursSlider.value;
-  const url  = `${location.origin}?km=${km}&jours=${jours}&ctx=${contexte}`;
-  const texte = `J'ai simulé mon trajet sur Cargo Ninja 🚲\n${formatEuros(economie)} économisés/an, ${Math.round(minVeloAn/60)} h à vélo, et ${ratio}× l'activité OMS.\nEt toi ? ${url}`;
-
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'share', { km, jours, contexte, economie, ratio_oms: ratio });
-  }
+  const url   = `${location.origin}?km=${kmSlider.value}&jours=${joursSlider.value}&ctx=${contexte}`;
+  const texte = `J'ai simulé mon trajet sur Cargo Ninja 🚲\n${fmt(economie)} économisés/an, ${Math.round(minVeloAn/60)} h à vélo, et ${ratio}× la recommandation OMS.\nEt toi ? ${url}`;
+  if (typeof gtag !== 'undefined') gtag('event', 'share', { km: kmSlider.value, jours: joursSlider.value, contexte, economie, ratio_oms: ratio });
   if (navigator.share) {
     navigator.share({ text: texte, url });
   } else {
@@ -328,18 +274,12 @@ shareBtn.addEventListener('click', () => {
   }
 });
 
-// --- INIT DEPUIS URL ---
-function initFromUrl() {
-  const p = new URLSearchParams(location.search);
-  if (p.get('km'))    kmSlider.value = p.get('km');
-  if (p.get('jours')) joursSlider.value = p.get('jours');
-  if (p.get('ctx') === 'periurbain') {
-    contexte = 'periurbain';
-    btnPeriurbain.classList.add('active');
-    btnUrbain.classList.remove('active');
-  }
+// --- INIT ---
+const p = new URLSearchParams(location.search);
+if (p.get('km'))    kmSlider.value = p.get('km');
+if (p.get('jours')) joursSlider.value = p.get('jours');
+if (p.get('ctx') === 'periurbain') {
+  contexte = 'periurbain';
+  btnPeriurbain.classList.add('active'); btnUrbain.classList.remove('active');
 }
-
-// --- DÉMARRAGE ---
-initFromUrl();
 updateUI();
