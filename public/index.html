@@ -8,10 +8,10 @@
   <!-- SEO -->
   <meta name="description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique. Comparaison du coût réel, du CO₂ et des temps de trajet.">
   <meta name="keywords" content="vélo cargo, simulateur, économies voiture, mobilité douce, comparateur transport">
-  <meta name="author" content="CaptainCargo">
+  <meta name="author" content="Cargo Ninja">
   <link rel="canonical" href="https://app.cargoninja.app">
 
-  <!-- Open Graph (partage WhatsApp, Facebook, LinkedIn) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="Simulateur Vélo Cargo | Économies, CO₂ et comparaison voiture">
   <meta property="og:description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique.">
   <meta property="og:url" content="https://app.cargoninja.app">
@@ -38,6 +38,25 @@
 </head>
 <body>
 
+  <!-- BARRE STICKY (visible quand on a scrollé) -->
+  <div class="sticky-summary" id="stickySummary">
+    <div class="sticky-chip yellow">
+      <span>💸</span><span id="stickyArgent">–</span>
+    </div>
+    <div class="sticky-chip purple">
+      <span>📊</span><span id="stickyAmort">–</span>
+    </div>
+    <div class="sticky-chip teal">
+      <span>⏱️</span><span id="stickyTemps">–</span>
+    </div>
+    <div class="sticky-chip green">
+      <span>🌱</span><span id="stickyCo2">–</span>
+    </div>
+    <div class="sticky-chip coral">
+      <span>💪</span><span id="stickyForme">–</span>
+    </div>
+  </div>
+
   <header>
     <div class="header-inner">
       <div class="logo">Cargo<br>Ninja</div>
@@ -48,17 +67,18 @@
           <div class="ninja-name" id="ninjaName">Bébé Ninja</div>
         </div>
       </div>
-      <button class="settings-btn" id="settingsBtn" aria-label="Paramètres">⚙️</button>
+      <div style="width:36px"></div><!-- spacer pour centrer le ninja -->
     </div>
   </header>
 
   <main>
     <div class="seo-header">
       <h1>Simulateur Vélo Cargo : comparez vos économies face à la voiture</h1>
-      <p>Découvrez combien vous pouvez économiser chaque année en remplaçant une partie de vos trajets en voiture par un vélo cargo électrique. Comparez le coût réel, les émissions de CO₂ évitées et les bénéfices concrets selon votre distance quotidienne.</p>
+      <p>Découvrez combien vous pouvez économiser chaque année en remplaçant une partie de vos trajets en voiture par un vélo cargo électrique.</p>
     </div>
 
-    <section class="inputs-card">
+    <!-- SECTION TRAJET & VOITURE -->
+    <section class="inputs-card" id="inputsCard">
 
       <div class="input-group">
         <div class="input-label">
@@ -86,10 +106,45 @@
         </div>
       </div>
 
+      <div class="input-group">
+        <div class="input-label"><span>🚗 Mon véhicule actuel</span></div>
+        <select id="vehiculeSelect">
+          <option value="0.32">Citadine thermique — 0,32 €/km</option>
+          <option value="0.41">Berline thermique — 0,41 €/km</option>
+          <option value="0.52" selected>SUV thermique — 0,52 €/km</option>
+          <option value="0.29">Citadine électrique — 0,29 €/km</option>
+          <option value="0.38">SUV électrique — 0,38 €/km</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
+        <div class="slider-row">
+          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
+          <span class="slider-value" id="parkingMoisVal">0 €</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-label"><span>🏖️ Semaines travaillées / an</span></div>
+        <div class="slider-row">
+          <input type="range" id="semainesTravail" min="40" max="52" value="47" step="1">
+          <span class="slider-value" id="semainesTravailVal">47 sem</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-label"><span>⚡ Vitesse voiture en ville</span></div>
+        <div class="slider-row">
+          <input type="range" id="vitesseVoiture" min="10" max="50" value="14" step="1">
+          <span class="slider-value" id="vitesseVoitureVal">14 km/h</span>
+        </div>
+      </div>
+
     </section>
 
-    <!-- CARTES PLEINE LARGEUR : Argent + Temps -->
-    <section class="results">
+    <!-- CARTES PLEINE LARGEUR -->
+    <section class="results" id="resultsSection">
 
       <div class="result-card yellow" id="cardArgent">
         <div class="result-icon-wrap">💸</div>
@@ -111,7 +166,7 @@
 
     </section>
 
-    <!-- SECTION FINANCIÈRE : toujours visible -->
+    <!-- SECTION VÉLO CARGO -->
     <section class="inputs-card amort-section" id="amortSection">
 
       <div class="amort-section-title">💰 Votre vélo cargo</div>
@@ -147,14 +202,6 @@
             <input type="range" id="loyerMensuel" min="50" max="400" value="150" step="10">
             <span class="slider-value" id="loyerMensuelVal">150 €/mois</span>
           </div>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
-        <div class="slider-row">
-          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
-          <span class="slider-value" id="parkingMoisVal">0 €</span>
         </div>
       </div>
 
@@ -227,65 +274,6 @@
     <p class="credit credit-footer">Outil proposé par les vélos <a href="https://etnicycles.com" target="_blank">etnicycles.com</a></p>
 
   </main>
-
-  <!-- Pop-up Paramètres -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <div class="modal-header">
-        <span>⚙️ Paramètres</span>
-        <button class="modal-close" id="modalClose">✕</button>
-      </div>
-
-      <div class="param-group">
-        <label>Mon véhicule actuel</label>
-        <select id="vehiculeSelect">
-          <option value="0.32">Citadine thermique - 0,32 €/km</option>
-          <option value="0.41">Berline thermique - 0,41 €/km</option>
-          <option value="0.52" selected>SUV thermique - 0,52 €/km</option>
-          <option value="0.29">Citadine électrique - 0,29 €/km</option>
-          <option value="0.38">SUV électrique - 0,38 €/km</option>
-        </select>
-        <div class="param-note">Coût/km modifiable : <input type="number" id="coutKm" value="0.52" step="0.01" min="0.1" max="1.5"> €/km</div>
-      </div>
-
-      <div class="param-group">
-        <label>Vitesse moyenne en ville</label>
-        <div class="param-slider-row">
-          <span>🚗</span>
-          <input type="range" id="vitesseVoiture" min="10" max="50" value="14" step="1">
-          <span id="vitesseVoitureVal">14 km/h</span>
-        </div>
-        <div class="param-slider-row">
-          <span>🚲</span>
-          <input type="range" id="vitessevelo" min="10" max="25" value="15" step="1">
-          <span id="vitesseveloVal">15 km/h</span>
-        </div>
-      </div>
-
-      <div class="param-group">
-        <label>Semaines travaillées par an</label>
-        <div class="param-slider-row">
-          <span>🏖️</span>
-          <input type="range" id="semainesTravail" min="40" max="52" value="47" step="1">
-          <span id="semainesTravailVal">47 sem (5 sem de vacances)</span>
-        </div>
-      </div>
-
-      <div class="param-group">
-        <label>Objectif activité physique</label>
-        <div class="param-slider-row">
-          <span>🏃</span>
-          <input type="range" id="activiteOms" min="60" max="300" value="150" step="30">
-          <span id="activiteOmsVal">150 min/sem (OMS)</span>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-reset" id="btnReset">Réinitialiser</button>
-        <button class="btn-apply" id="btnApply">Appliquer ✓</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Toast partage -->
   <div class="toast" id="toast">✅ Lien copié !</div>
