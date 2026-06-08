@@ -104,11 +104,8 @@ const vitesseVoitureSlider = document.getElementById('vitesseVoiture');
 const vitesseVoitureVal    = document.getElementById('vitesseVoitureVal');
 
 // --- DOM : RÉSULTATS ---
-const valArgent    = document.getElementById('valArgent');
-const equivArgent  = document.getElementById('equivArgent');
-const valForme     = document.getElementById('valForme');
-const shareBtn     = document.getElementById('shareBtn');
-const toast        = document.getElementById('toast');
+const shareBtn = document.getElementById('shareBtn');
+const toast    = document.getElementById('toast');
 
 // --- DOM : AMORTISSEMENT ---
 let amortMode = 'achat';
@@ -122,12 +119,7 @@ const dureeAmortSlider   = document.getElementById('dureeAmort');
 const dureeAmortVal      = document.getElementById('dureeAmortVal');
 const loyerSlider        = document.getElementById('loyerMensuel');
 const loyerVal           = document.getElementById('loyerMensuelVal');
-const valAmort           = document.getElementById('valAmort');
-const labelAmort         = document.getElementById('labelAmort');
-const equivAmort         = document.getElementById('equivAmort');
 
-// --- DOM : STICKY ---
-const stickySummary = document.getElementById('stickySummary');
 
 // --- HELPERS ---
 function getEquivalence(euros) {
@@ -175,71 +167,69 @@ function calculate() {
 }
 
 // --- MISE À JOUR AMORTISSEMENT ---
-function updateAmort(economieMensuelle) {
+function calcAmort(economieMensuelle) {
   if (amortMode === 'achat') {
     const prix    = parseInt(prixVeloSlider.value);
     const duree   = parseInt(dureeAmortSlider.value);
     const gainNet = economieMensuelle - prix / duree;
-
     if (gainNet >= 0) {
-      valAmort.textContent   = '+' + Math.round(gainNet) + ' €/mois';
-      labelAmort.textContent = 'de gain net dès maintenant';
-      equivAmort.textContent = `vélo amorti sur ${duree} mois · vous êtes gagnant 🎉`;
+      return { val: '+' + Math.round(gainNet) + ' €/mois', label: 'de gain net dès maintenant', equiv: `vélo amorti sur ${duree} mois · vous êtes gagnant 🎉` };
     } else {
       const moisAmort = Math.ceil(prix / economieMensuelle);
-      valAmort.textContent   = moisAmort + ' mois';
-      labelAmort.textContent = 'pour amortir le vélo cargo';
-      equivAmort.textContent = `ensuite +${Math.round(economieMensuelle)} €/mois dans la poche`;
+      return { val: moisAmort + ' mois', label: 'pour amortir le vélo cargo', equiv: `ensuite +${Math.round(economieMensuelle)} €/mois dans la poche` };
     }
   } else {
     const loyer   = parseInt(loyerSlider.value);
     const gainNet = economieMensuelle - loyer;
     if (gainNet >= 0) {
-      valAmort.textContent   = '+' + Math.round(gainNet) + ' €/mois';
-      labelAmort.textContent = 'de gain net (loyer inclus)';
-      equivAmort.textContent = 'la location se finance toute seule 🎉';
+      return { val: '+' + Math.round(gainNet) + ' €/mois', label: 'de gain net (loyer inclus)', equiv: 'la location se finance toute seule 🎉' };
     } else {
-      valAmort.textContent   = Math.round(Math.abs(gainNet)) + ' €/mois';
-      labelAmort.textContent = 'restent à votre charge après économies';
-      equivAmort.textContent = `soit ${Math.round(Math.abs(gainNet) * 12)} €/an nets`;
+      return { val: Math.round(Math.abs(gainNet)) + ' €/mois', label: 'restent à votre charge après économies', equiv: `soit ${Math.round(Math.abs(gainNet) * 12)} €/an nets` };
     }
   }
-  bump(document.getElementById('cardAmort'));
+}
+
+function setAmortCard(suffix, a) {
+  document.getElementById('valAmort' + suffix).textContent   = a.val;
+  document.getElementById('labelAmort' + suffix).textContent = a.label;
+  document.getElementById('equivAmort' + suffix).textContent = a.equiv;
+  bump(document.getElementById('cardAmort' + suffix));
 }
 
 // --- MISE À JOUR UI ---
 function updateUI() {
   const { economie, diffMin, minVeloAn, tempsPositif, ratio, minVeloSemaine, co2Economise } = calculate();
 
-  // Argent
-  valArgent.textContent = formatEuros(economie);
-  equivArgent.textContent = getEquivalence(economie);
-  bump(document.getElementById('cardArgent'));
-
-  // Temps
   const heuresVelo  = Math.round(minVeloAn / 60);
   const heuresDelta = Math.round(Math.abs(diffMin) / 60);
-  document.getElementById('valTempsVelo').textContent = heuresVelo + ' h';
-  document.getElementById('valTempsDelta').textContent = tempsPositif
-    ? `dont ${heuresDelta} h économisées vs voiture 🚗`
-    : `0 h économisées vs voiture 🚗`;
-  bump(document.getElementById('cardTemps'));
-
-  // Forme
-  valForme.textContent = ratio + '×';
-  bump(document.getElementById('cardForme'));
-
-  // CO₂
+  const tempsDelta  = tempsPositif ? `dont ${heuresDelta} h économisées vs voiture 🚗` : `0 h économisées vs voiture 🚗`;
   const co2Txt = co2Economise >= 1000
     ? (co2Economise / 1000).toFixed(1).replace('.', ',') + ' t'
     : co2Economise + ' kg';
-  document.getElementById('valCo2').textContent = co2Txt;
   const co2Equiv = CO2_EQUIVALENCES.find(e => co2Economise <= e.max)?.label || CO2_EQUIVALENCES.at(-1).label;
-  document.getElementById('equivCo2').textContent = co2Equiv;
-  bump(document.getElementById('cardCo2'));
+  const equivA   = getEquivalence(economie);
+  const amort    = calcAmort(economie / 12);
 
-  // Amortissement
-  updateAmort(economie / 12);
+  // Mise à jour des deux blocs de cartes
+  ['', '2'].forEach(s => {
+    // Argent
+    document.getElementById('valArgent' + s).textContent  = formatEuros(economie);
+    document.getElementById('equivArgent' + s).textContent = equivA;
+    bump(document.getElementById('cardArgent' + s));
+    // Temps
+    document.getElementById('valTempsVelo' + s).textContent  = heuresVelo + ' h';
+    document.getElementById('valTempsDelta' + s).textContent = tempsDelta;
+    bump(document.getElementById('cardTemps' + s));
+    // Amort
+    setAmortCard(s, amort);
+    // CO₂
+    document.getElementById('valCo2' + (s === '2' ? '2' : '')).textContent  = co2Txt;
+    document.getElementById('equivCo2' + (s === '2' ? '2' : '')).textContent = co2Equiv;
+    bump(document.getElementById('cardCo2' + (s === '2' ? '2' : '')));
+    // Forme
+    document.getElementById('valForme' + s).textContent = ratio + '×';
+    bump(document.getElementById('cardForme' + s));
+  });
 
   // Ninja
   updateNinja(minVeloSemaine);
@@ -247,14 +237,6 @@ function updateUI() {
   // Labels sliders
   kmValue.textContent    = kmSlider.value + ' km';
   joursValue.textContent = joursSlider.value + ' j';
-
-  // Sticky summary
-  const amortTxt = valAmort.textContent;
-  document.getElementById('stickyArgent').textContent = formatEuros(economie);
-  document.getElementById('stickyAmort').textContent  = amortTxt;
-  document.getElementById('stickyTemps').textContent  = Math.round(minVeloAn / 60) + ' h';
-  document.getElementById('stickyCo2').textContent    = co2Txt;
-  document.getElementById('stickyForme').textContent  = ratio + '×';
 }
 
 // --- EVENTS : TRAJET ---
@@ -324,13 +306,6 @@ loyerSlider.addEventListener('input', () => {
   loyerVal.textContent = loyerSlider.value + ' €/mois';
   updateUI();
 });
-
-// --- STICKY SCROLL ---
-const resultsSection = document.getElementById('resultsSection');
-const observer = new IntersectionObserver(([entry]) => {
-  stickySummary.classList.toggle('visible', !entry.isIntersecting);
-}, { threshold: 0 });
-observer.observe(resultsSection);
 
 // --- PARTAGE ---
 shareBtn.addEventListener('click', () => {
