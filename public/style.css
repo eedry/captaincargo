@@ -337,24 +337,26 @@ input[type="range"]::-webkit-slider-thumb:active {
 
 /* CARDS DEMI-LARGEUR (CO₂ + Forme) */
 .results-half {
-  display: flex;
-  flex-direction: row;
+  display: flex !important;
+  flex-direction: row !important;
   gap: 14px;
+  width: 100%;
 }
 .results-half .result-card {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 16px 14px;
-  flex-direction: column;
-  align-items: flex-start;
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 16px 14px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
 }
 .result-icon-wrap-sm {
   font-size: 1.4rem;
   margin-bottom: 6px;
 }
-.results-half .result-value { font-size: 1.7rem; letter-spacing: -0.5px; }
-.results-half .result-label { font-size: 0.72rem; }
-.results-half .result-equiv { font-size: 0.68rem; padding: 2px 8px; }
+.results-half .result-value { font-size: 1.7rem !important; letter-spacing: -0.5px; }
+.results-half .result-label { font-size: 0.72rem !important; }
+.results-half .result-equiv { font-size: 0.68rem !important; padding: 2px 8px !important; }
 
 
 /* CARD PURPLE → BLEU pour amortissement */
