@@ -42,6 +42,7 @@ const DEFAULTS = {
   vitessevelo: 15,
   activiteOms: 150,
   semainesTravail: 47,
+  parkingMois: 0,
 };
 
 // Traductions CO₂ économisé → équivalences fun
@@ -124,7 +125,8 @@ function calculate() {
   const kmAn = kmJour * jours * params.semainesTravail;
 
   // 1. ARGENT
-  const coutVoitureAn = kmAn * params.coutKm;
+  const parkingAn     = (params.parkingMois || 0) * 12;
+  const coutVoitureAn = kmAn * params.coutKm + parkingAn;
   const coutVeloAn    = 200; // entretien forfait
   const economieBrute = coutVoitureAn - coutVeloAn;
   const economie = Math.max(0, Math.round(economieBrute));
@@ -266,6 +268,8 @@ btnReset.addEventListener('click', () => {
   vitesseveloVal.textContent = DEFAULTS.vitessevelo + ' km/h';
   activiteOmsSlider.value = DEFAULTS.activiteOms;
   activiteOmsVal.textContent = DEFAULTS.activiteOms + ' min/sem (OMS)';
+  parkingSlider.value = 0;
+  parkingVal.textContent = '0 €';
 });
 
 btnApply.addEventListener('click', () => {
@@ -274,6 +278,7 @@ btnApply.addEventListener('click', () => {
   params.vitessevelo = parseInt(vitesseveloSlider.value);
   params.activiteOms = parseInt(activiteOmsSlider.value);
   params.semainesTravail = parseInt(semainesSlider.value);
+  params.parkingMois = parseInt(parkingSlider.value) || 0;
   localStorage.setItem('captaincargo_params', JSON.stringify(params));
   modalOverlay.classList.remove('open');
   updateUI();
@@ -338,11 +343,7 @@ function loadSavedParams() {
 
 // --- AMORTISSEMENT ---
 let amortMode = 'achat'; // 'achat' | 'location'
-let amortVisible = false;
 
-const amortToggle      = document.getElementById('amortToggle');
-const amortChevron     = document.getElementById('amortChevron');
-const amortSection     = document.getElementById('amortSection');
 const amortResultWrapper = document.getElementById('amortResultWrapper');
 const btnAchat         = document.getElementById('btnAchat');
 const btnLocation      = document.getElementById('btnLocation');
@@ -357,14 +358,6 @@ const loyerVal         = document.getElementById('loyerMensuelVal');
 const valAmort         = document.getElementById('valAmort');
 const labelAmort       = document.getElementById('labelAmort');
 const equivAmort       = document.getElementById('equivAmort');
-
-amortToggle.addEventListener('click', () => {
-  amortVisible = !amortVisible;
-  amortSection.style.display = amortVisible ? 'flex' : 'none';
-  amortResultWrapper.style.display = amortVisible ? 'flex' : 'none';
-  amortChevron.classList.toggle('open', amortVisible);
-  if (amortVisible) updateUI();
-});
 
 btnAchat.addEventListener('click', () => {
   amortMode = 'achat';
@@ -392,8 +385,16 @@ loyerSlider.addEventListener('input', () => {
   updateUI();
 });
 
+const parkingSlider = document.getElementById('parkingMois');
+const parkingVal    = document.getElementById('parkingMoisVal');
+parkingSlider.addEventListener('input', () => {
+  const v = parseInt(parkingSlider.value);
+  parkingVal.textContent = v === 0 ? '0 €' : v + ' €/mois';
+  params.parkingMois = v;
+  updateUI();
+});
+
 function updateAmort(economieMensuelle) {
-  if (!amortVisible) return;
 
   if (amortMode === 'achat') {
     const prix     = parseInt(prixVeloSlider.value);

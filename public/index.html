@@ -9,18 +9,18 @@
   <meta name="description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique. Comparaison du coût réel, du CO₂ et des temps de trajet.">
   <meta name="keywords" content="vélo cargo, simulateur, économies voiture, mobilité douce, comparateur transport">
   <meta name="author" content="CaptainCargo">
-  <link rel="canonical" href="https://captaincargo.app">
+  <link rel="canonical" href="https://app.cargoninja.app">
 
   <!-- Open Graph (partage WhatsApp, Facebook, LinkedIn) -->
   <meta property="og:title" content="Simulateur Vélo Cargo | Économies, CO₂ et comparaison voiture">
   <meta property="og:description" content="Calculez combien vous pouvez économiser en remplaçant votre voiture par un vélo cargo électrique.">
-  <meta property="og:url" content="https://captaincargo.app">
+  <meta property="og:url" content="https://app.cargoninja.app">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="CaptainCargo - Et si ton trajet te rapportait gros ?">
+  <meta name="twitter:title" content="Cargo Ninja - Et si ton trajet te rapportait gros ?">
   <meta name="twitter:description" content="Simule en 30 secondes ce que tu gagnes en passant au vélo cargo.">
 
   <!-- Google Analytics -->
@@ -58,7 +58,6 @@
       <p>Découvrez combien vous pouvez économiser chaque année en remplaçant une partie de vos trajets en voiture par un vélo cargo électrique. Comparez le coût réel, les émissions de CO₂ évitées et les bénéfices concrets selon votre distance quotidienne.</p>
     </div>
 
-
     <section class="inputs-card">
 
       <div class="input-group">
@@ -89,6 +88,7 @@
 
     </section>
 
+    <!-- CARTES PLEINE LARGEUR : Argent + Temps -->
     <section class="results">
 
       <div class="result-card yellow" id="cardArgent">
@@ -97,15 +97,6 @@
           <div class="result-value" id="valArgent">1 840 €</div>
           <div class="result-label">économisés par an</div>
           <div class="result-equiv" id="equivArgent">= une semaine en gîte pour la famille</div>
-        </div>
-      </div>
-
-      <div class="result-card cyan" id="cardCo2">
-        <div class="result-icon-wrap">🌱</div>
-        <div class="result-content">
-          <div class="result-value" id="valCo2">1,2 t</div>
-          <div class="result-label">de CO₂ économisées par an</div>
-          <div class="result-equiv" id="equivCo2">= 48 arbres qui absorbent pendant 1 an</div>
         </div>
       </div>
 
@@ -118,26 +109,12 @@
         </div>
       </div>
 
-      <div class="result-card coral" id="cardForme">
-        <div class="result-icon-wrap">💪</div>
-        <div class="result-content">
-          <div class="result-value" id="valForme">3×</div>
-          <div class="result-label">la dose d'activité physique recommandée / semaine par l'OMS</div>
-          <div class="result-equiv">et vous êtes en super forme ✨</div>
-        </div>
-      </div>
-
     </section>
 
-    <!-- Option amortissement -->
-    <div class="amort-toggle-row">
-      <button class="amort-toggle-btn" id="amortToggle">
-        <span>💰 Calculer l'amortissement du vélo cargo</span>
-        <span class="amort-chevron" id="amortChevron">▸</span>
-      </button>
-    </div>
+    <!-- SECTION FINANCIÈRE : toujours visible -->
+    <section class="inputs-card amort-section" id="amortSection">
 
-    <section class="inputs-card amort-section" id="amortSection" style="display:none">
+      <div class="amort-section-title">💰 Votre vélo cargo</div>
 
       <div class="input-group">
         <div class="context-toggle">
@@ -173,9 +150,18 @@
         </div>
       </div>
 
+      <div class="input-group">
+        <div class="input-label"><span>🅿️ Parking mensuel</span></div>
+        <div class="slider-row">
+          <input type="range" id="parkingMois" min="0" max="400" value="0" step="10">
+          <span class="slider-value" id="parkingMoisVal">0 €</span>
+        </div>
+      </div>
+
     </section>
 
-    <div class="results" id="amortResultWrapper" style="display:none">
+    <!-- RÉSULTAT AMORTISSEMENT -->
+    <div class="results" id="amortResultWrapper">
       <div class="result-card purple" id="cardAmort">
         <div class="result-icon-wrap">📊</div>
         <div class="result-content">
@@ -184,6 +170,29 @@
           <div class="result-equiv" id="equivAmort">-</div>
         </div>
       </div>
+    </div>
+
+    <!-- CARTES DEMI-LARGEUR : CO₂ + Forme -->
+    <div class="results-half">
+
+      <div class="result-card cyan" id="cardCo2">
+        <div class="result-content">
+          <div class="result-icon-wrap-sm">🌱</div>
+          <div class="result-value" id="valCo2">1,2 t</div>
+          <div class="result-label">de CO₂ évitées / an</div>
+          <div class="result-equiv" id="equivCo2">= 48 arbres</div>
+        </div>
+      </div>
+
+      <div class="result-card coral" id="cardForme">
+        <div class="result-content">
+          <div class="result-icon-wrap-sm">💪</div>
+          <div class="result-value" id="valForme">3×</div>
+          <div class="result-label">dose OMS / sem</div>
+          <div class="result-equiv">en super forme ✨</div>
+        </div>
+      </div>
+
     </div>
 
     <button class="share-btn" id="shareBtn">📤 Partager mon résultat</button>
